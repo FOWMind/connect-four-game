@@ -1,0 +1,72 @@
+/* Colors */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: #7945ff;
+}
+
+.disc-wrapper {
+  display: inline-grid;
+  grid-template-columns: repeat(7, 50px);
+  gap: 10px;
+  padding: 10px;
+  border-radius: 15px;
+  background-color: #ffffff;
+  border: 3px solid #000000;
+  position: relative;
+}
+.disc-wrapper::before {
+  content: "";
+  position: absolute;
+  top: 4%;
+  left: -0.5%;
+  z-index: -1;
+  width: 101%;
+  height: 100%;
+  border-radius: 15px;
+  background-color: #000000;
+}
+
+.disc {
+  width: 50px;
+  height: 50px;
+  background-color: #000000;
+  border: 3px solid #000000;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+}
+.disc, .disc::before {
+  border-radius: 50px;
+}
+.disc::before {
+  content: "";
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  top: 25%;
+  left: 50%;
+  transform: translateX(-50%);
+  background-color: #7945ff;
+}
+.disc.clicked::before {
+  top: 10%;
+}
+.disc.clicked-one {
+  background-color: #7e3243;
+}
+.disc.clicked-one::before {
+  background-color: #fd6486;
+}
+.disc.clicked-two {
+  background-color: #7f6633;
+}
+.disc.clicked-two::before {
+  background-color: #ffce67;
+}
+
+/*# sourceMappingURL=index.css.map */
