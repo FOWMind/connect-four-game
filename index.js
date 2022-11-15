@@ -162,17 +162,28 @@ function turnCanContinue(siblingDiscs) {
   return turnCanContinue;
 }
 
-function getSound(name) {
+/**
+ * Create an audio instance from sound name.
+ * @param {string} soundName - The desired sound name to create (example: "pop").
+ * @returns The audio instance.
+ */
+function createAudio(soundName) {
   const paths = {
     pop: "./src/sounds/pop.mp3",
   };
-  if (!paths[name]) return;
-  const sound = new Audio(paths[name]);
-  return sound;
+  if (!paths[soundName]) {
+    throw new Error("Sound name is required.");
+  }
+  const audio = new Audio(paths[soundName]);
+  return audio;
 }
 
-function playSound(name) {
-  const sound = getSound(name);
+/**
+ * Play a sound by its name.
+ * @param {string} soundName - The sound name to play (example: "pop").
+ */
+function playSound(soundName) {
+  const sound = createAudio(soundName);
   sound.play();
 }
 
