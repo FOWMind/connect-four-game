@@ -1,5 +1,10 @@
 const root = document.getElementById("root");
-let currentPlayer = "one";
+const timePerTurn = 5; // seconds
+const players = {
+  one: "one",
+  two: "two",
+};
+let playerWithTurn = players.one;
 
 // Render
 const discsPerRow = 7;
@@ -9,7 +14,7 @@ const discAmount = discsPerRow * rows;
 function render() {
   renderDiscWrapper();
   renderDiscs(discAmount);
-  handleDiscClick(discsPerRow);
+  handleDiscClick(discsPerRow, playerWithTurn);
 }
 
 render();
@@ -29,15 +34,7 @@ START DEBUG
 const currentP = document.getElementById("current-player");
 const p1 = document.getElementById("p1");
 const p2 = document.getElementById("p2");
-currentP.innerHTML = "current player: " + currentPlayer;
-p1.addEventListener("click", () => {
-  currentPlayer = "one";
-  currentP.innerHTML = "current player: " + currentPlayer;
-});
-p2.addEventListener("click", () => {
-  currentPlayer = "two";
-  currentP.innerHTML = "current player: " + currentPlayer;
-});
+currentP.innerHTML = "Player with turn: " + playerWithTurn;
 /*
 END DEBUG
 END DEBUG
@@ -189,6 +186,31 @@ function playSound(soundName) {
   sound.play();
 }
 
+function changeTurnToOpponent() {
+  playerWithTurn = playerWithTurn === players.one ? players.two : players.one;
+}
+
+function updateTurnTimerEachSecond() {
+  let currentTurnTime = timePerTurn;
+  console.log(currentTurnTime);
+  const timer = setInterval(() => {
+    currentTurnTime -= 1;
+    console.log(currentTurnTime);
+  }, 1000);
+  return timer;
+}
+
+function handleTurnChange() {
+  changeTurnToOpponent();
+  currentP.innerHTML = "Player with turn: " + playerWithTurn;
+  const turnTimer = updateTurnTimerEachSecond();
+  setTimeout(() => {
+    console.log("timeout.");
+    changeTurnToOpponent();
+    clearInterval(turnTimer);
+  }, timePerTurn * 1000);
+}
+
 /**
  * Handles the visual and sound effects of a clicked disc.
  * @param {number} discsPerRow - number of discs rendered in a row. Must be an integer.
@@ -200,7 +222,8 @@ function handleDiscClick(discsPerRow) {
     if (!clickedDisc || previouslyClicked) return;
 
     playSound("pop");
-    clickedDisc.classList.add("clicked", "clicked-" + currentPlayer);
+    clickedDisc.classList.add("clicked", "clicked-" + playerWithTurn);
+    handleTurnChange();
 
     const siblingDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
     const canContinue = turnCanContinue(siblingDiscs);
