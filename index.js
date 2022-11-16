@@ -1,10 +1,14 @@
 const root = document.getElementById("root");
+const restartButton = document.getElementById("restart");
+const turnText = document.getElementById("turn-text");
+
 const timePerTurn = 5; // seconds
 const players = {
   one: "one",
   two: "two",
 };
-let playerWithTurn = players.one;
+const initialTurn = players.one;
+let playerWithTurn = initialTurn;
 let currentTurnTimer;
 let currentTurnTimeout;
 
@@ -13,42 +17,59 @@ const discsPerRow = 7;
 const rows = 6;
 const discAmount = discsPerRow * rows;
 
+/**
+ * Handles the application render.
+ */
 function render() {
   renderDiscWrapper();
   renderDiscs(discAmount);
-  handleDiscClick(discsPerRow, playerWithTurn);
+  handleEvents();
 }
-
 render();
 
-/*
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-START DEBUG
-*/
-const currentP = document.getElementById("current-player");
-const p1 = document.getElementById("p1");
-const p2 = document.getElementById("p2");
-currentP.innerHTML = "Player with turn: " + playerWithTurn;
-/*
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-END DEBUG
-*/
+// START DEBUG
+turnText.innerHTML = "Player with turn: " + playerWithTurn;
+// END DEBUG
+
+function handleEvents() {
+  document.addEventListener("click", (e) => {
+    const target = e.target;
+    const isClickedDisc = target.id === "disc";
+    const isRestartButton = target === restartButton;
+
+    if (isRestartButton) {
+      return restart();
+    } else if (isClickedDisc) {
+      return handleDiscClick(target);
+    }
+  });
+}
+
+/**
+ * Restart the current game session.
+ */
+function restart() {
+  const discs = getAllDiscs();
+  const someDiscClicked = discs.some((disc) => {
+    return disc.classList.contains("clicked");
+  });
+
+  // Avoid restart if not necessary
+  if (!someDiscClicked) return;
+
+  // Clear turn
+  playerWithTurn = initialTurn;
+  turnText.innerHTML = "Player with turn: " + playerWithTurn;
+
+  // Clear timers
+  clearInterval(currentTurnTimer);
+  clearTimeout(currentTurnTimeout);
+
+  // Clear classes
+  discs.forEach((disc) =>
+    disc.classList.remove("clicked", "clicked-one", "clicked-two")
+  );
+}
 
 /**
  * Create a wrapper for the discs that will be rendered.
@@ -149,6 +170,16 @@ function getSiblingDiscs(disc, discsPerRow) {
 }
 
 /**
+ * Get all discs from disc wrapper.
+ * @returns All discs found from disc wrapper.
+ */
+function getAllDiscs() {
+  const discsWrapper = document.getElementById("disc-wrapper");
+  const allDiscs = [...discsWrapper.children];
+  return allDiscs;
+}
+
+/**
  * Calc if it is possible to continue the player turn.
  * @param {object} siblingDiscs - All the sibling discs of a specific disc.
  * @returns Whether the turn can continue or not.
@@ -188,11 +219,18 @@ function playSound(soundName) {
   sound.play();
 }
 
+/**
+ * Change the current turn to opponent and show it in screen.
+ */
 function changeTurnToOpponent() {
   playerWithTurn = playerWithTurn === players.one ? players.two : players.one;
-  currentP.innerHTML = "Player with turn: " + playerWithTurn;
+  turnText.innerHTML = "Player with turn: " + playerWithTurn;
 }
 
+/**
+ * Updates turn time every second and shows it in screen.
+ * @returns The turn interval identifier.
+ */
 function updateTurnTimeEachSecond() {
   let timeLeft = timePerTurn;
   console.log("time left: ", timeLeft);
@@ -204,6 +242,10 @@ function updateTurnTimeEachSecond() {
   return timer;
 }
 
+/**
+ * Change the current turn to opponent when turn time ends.
+ * @returns The turn timeout identifier.
+ */
 function changeTurnAfterTimeout() {
   timeout = setTimeout(() => {
     console.log("timeout.");
@@ -213,6 +255,9 @@ function changeTurnAfterTimeout() {
   return timeout;
 }
 
+/**
+ * Handles what happen with the turns.
+ */
 function handleTurnChange() {
   changeTurnToOpponent();
   if (currentTurnTimer !== undefined) clearInterval(currentTurnTimer);
@@ -224,21 +269,18 @@ function handleTurnChange() {
 
 /**
  * Handles the visual and sound effects of a clicked disc.
- * @param {number} discsPerRow - number of discs rendered in a row. Must be an integer.
+ * @param {HTMLElement} clickedDisc - The clicked disc captured by the event disc.
  */
-function handleDiscClick(discsPerRow) {
-  document.addEventListener("click", (e) => {
-    const clickedDisc = e.target.id === "disc" ? e.target : null;
-    const previouslyClicked = clickedDisc?.classList.contains("clicked");
-    if (!clickedDisc || previouslyClicked) return;
+function handleDiscClick(clickedDisc) {
+  const previouslyClicked = clickedDisc.classList.contains("clicked");
+  if (previouslyClicked) return;
 
-    playSound("pop");
-    clickedDisc.classList.add("clicked", "clicked-" + playerWithTurn);
-    handleTurnChange();
+  playSound("pop");
+  clickedDisc.classList.add("clicked", "clicked-" + playerWithTurn);
+  handleTurnChange();
 
-    const siblingDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
-    const canContinue = turnCanContinue(siblingDiscs);
-    console.log({ clickedDisc, ...siblingDiscs });
-    console.log({ canContinue });
-  });
+  const siblingDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
+  const canContinue = turnCanContinue(siblingDiscs);
+  console.log({ clickedDisc, ...siblingDiscs });
+  console.log({ canContinue });
 }

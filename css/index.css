@@ -5,8 +5,58 @@
   box-sizing: border-box;
 }
 
+html {
+  line-height: 1.15;
+}
+
 body {
   background-color: #7945ff;
+  font-family: "Montserrat", sans-serif;
+}
+
+#root {
+  max-width: 700px;
+  margin: 0 auto;
+  display: grid;
+  place-content: center;
+}
+
+.button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+  border-radius: 50px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: #5b2cd5;
+  color: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 0;
+}
+
+.balls {
+  max-width: 45px;
+  margin: 0 0.5rem;
+}
+.balls .ball {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 50px;
+  background-color: #fd6486;
+  border: 2px solid #000000;
+  box-shadow: 0 2.5px 0 0 #000000;
+}
+.balls .ball:nth-of-type(2), .balls .ball:nth-of-type(3) {
+  background-color: #ffce67;
 }
 
 .disc-wrapper {
