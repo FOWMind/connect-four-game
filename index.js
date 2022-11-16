@@ -5,6 +5,8 @@ const players = {
   two: "two",
 };
 let playerWithTurn = players.one;
+let currentTurnTimer;
+let currentTurnTimeout;
 
 // Render
 const discsPerRow = 7;
@@ -188,27 +190,36 @@ function playSound(soundName) {
 
 function changeTurnToOpponent() {
   playerWithTurn = playerWithTurn === players.one ? players.two : players.one;
+  currentP.innerHTML = "Player with turn: " + playerWithTurn;
 }
 
-function updateTurnTimerEachSecond() {
-  let currentTurnTime = timePerTurn;
-  console.log(currentTurnTime);
-  const timer = setInterval(() => {
-    currentTurnTime -= 1;
-    console.log(currentTurnTime);
+function updateTurnTimeEachSecond() {
+  let timeLeft = timePerTurn;
+  console.log("time left: ", timeLeft);
+  timer = setInterval(() => {
+    // each second
+    timeLeft--;
+    console.log("time left: ", timeLeft);
   }, 1000);
   return timer;
 }
 
-function handleTurnChange() {
-  changeTurnToOpponent();
-  currentP.innerHTML = "Player with turn: " + playerWithTurn;
-  const turnTimer = updateTurnTimerEachSecond();
-  setTimeout(() => {
+function changeTurnAfterTimeout() {
+  timeout = setTimeout(() => {
     console.log("timeout.");
     changeTurnToOpponent();
-    clearInterval(turnTimer);
+    clearInterval(currentTurnTimer);
   }, timePerTurn * 1000);
+  return timeout;
+}
+
+function handleTurnChange() {
+  changeTurnToOpponent();
+  if (currentTurnTimer !== undefined) clearInterval(currentTurnTimer);
+  if (currentTurnTimeout !== undefined) clearTimeout(currentTurnTimeout);
+
+  currentTurnTimer = updateTurnTimeEachSecond();
+  currentTurnTimeout = changeTurnAfterTimeout();
 }
 
 /**
