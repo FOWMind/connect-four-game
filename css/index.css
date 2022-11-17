@@ -2,6 +2,8 @@
 * {
   margin: 0;
   padding: 0;
+}
+*, *::before, *::after {
   box-sizing: border-box;
 }
 
@@ -11,7 +13,7 @@ html {
 
 body {
   background-color: #7945ff;
-  font-family: "Montserrat", sans-serif;
+  font-family: "Poppins", sans-serif;
 }
 
 #root {
@@ -59,26 +61,73 @@ body {
   background-color: #ffce67;
 }
 
+.players-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.players-wrapper .player:first-of-type .player-avatar {
+  left: -25px;
+}
+.players-wrapper .player:last-of-type .player-avatar {
+  right: -25px;
+}
+
+.player {
+  padding: 1.5rem;
+  border-radius: 15px;
+  display: inline-block;
+  background-color: #fff;
+  border: 3px solid #000000;
+  box-shadow: 0 10px 0 0 #000000;
+  position: relative;
+}
+.player-avatar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 50px;
+  height: 50px;
+}
+.player-avatar::before {
+  content: "";
+  position: absolute;
+  bottom: -10%;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  border-radius: 50%;
+}
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 5;
+}
+.player-name {
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0 0.5rem;
+}
+
 .disc-wrapper {
   display: inline-grid;
   grid-template-columns: repeat(7, 50px);
   gap: 10px;
   padding: 10px;
+  margin-top: 2rem;
   border-radius: 15px;
   background-color: #ffffff;
   border: 3px solid #000000;
-  position: relative;
-}
-.disc-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 4%;
-  left: -0.5%;
-  z-index: -1;
-  width: 101%;
-  height: 100%;
-  border-radius: 15px;
-  background-color: #000000;
+  box-shadow: 0 10px 0 0 #000000;
 }
 
 .disc {

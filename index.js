@@ -2,7 +2,7 @@ const root = document.getElementById("root");
 const restartButton = document.getElementById("restart");
 const turnText = document.getElementById("turn-text");
 
-const timePerTurn = 5; // seconds
+const timePerTurn = 4; // seconds
 const players = {
   one: "one",
   two: "two",
@@ -21,7 +21,7 @@ const discAmount = discsPerRow * rows;
  * Handles the application render.
  */
 function render() {
-  renderDiscWrapper();
+  renderPlayers();
   renderDiscs(discAmount);
   handleEvents();
 }
@@ -31,6 +31,9 @@ render();
 turnText.innerHTML = "Player with turn: " + playerWithTurn;
 // END DEBUG
 
+/**
+ * Manage what happens with each event in the application.
+ */
 function handleEvents() {
   document.addEventListener("click", (e) => {
     const target = e.target;
@@ -72,13 +75,64 @@ function restart() {
 }
 
 /**
- * Create a wrapper for the discs that will be rendered.
+ *
+ * @param {string} playerName - A name for the new player.
+ * @param {string} playerAvatarPath - The path of the avatar image to use.
+ * @returns The player container element.
  */
-function renderDiscWrapper() {
+function createPlayer(playerName = "Player", playerAvatarPath = "") {
+  const container = document.createElement("div");
+  container.setAttribute("class", "player");
+
+  const avatarContainer = document.createElement("div");
+  const avatarImage = new Image();
+  avatarContainer.classList.add("player-avatar");
+  avatarContainer.appendChild(avatarImage);
+  avatarImage.setAttribute("src", playerAvatarPath);
+  avatarImage.classList.add("player-avatar-img");
+
+  const nameContainer = document.createElement("span");
+  const nameText = document.createTextNode(playerName);
+  nameContainer.classList.add("player-name");
+  nameContainer.appendChild(nameText);
+
+  container.append(avatarContainer, nameContainer);
+  return container;
+}
+
+/**
+ * Create a wrapper for the player elements that will be rendered.
+ * @returns The player wrapper element.
+ */
+function createPlayerWrapper() {
+  const wrapper = document.createElement("div");
+  wrapper.classList.add("players-wrapper");
+  return wrapper;
+}
+
+/**
+ * Shows the player boxes in screen.
+ */
+function renderPlayers() {
+  const playersWrapper = createPlayerWrapper();
+  const playerOne = createPlayer("Player 1", "./src/images/player-1.svg");
+  const playerTwo = createPlayer(
+    "Player 2",
+    "./src/images/player-2-reversed.svg"
+  );
+  playersWrapper.append(playerOne, playerTwo);
+  root.appendChild(playersWrapper);
+}
+
+/**
+ * Create a wrapper for the discs that will be rendered.
+ * @returns The disc wrapper element.
+ */
+function createDiscWrapper() {
   const wrapper = document.createElement("div");
   wrapper.setAttribute("class", "disc-wrapper");
   wrapper.setAttribute("id", "disc-wrapper");
-  root.appendChild(wrapper);
+  return wrapper;
 }
 
 /**
@@ -109,16 +163,17 @@ function createDiscList(amount) {
 }
 
 /**
- * Appends all the discs created to disc wrapper.
+ * Shows all the discs created in screen.
  * @param {number} amount - The desired amount of discs to render. Must be an integer.
  */
 function renderDiscs(amount) {
   const discList = createDiscList(amount);
-  const discWrapper = document.getElementById("disc-wrapper");
+  const discWrapper = createDiscWrapper();
 
   discList.forEach((disc) => {
     discWrapper.appendChild(disc);
   });
+  root.appendChild(discWrapper);
 }
 
 /**
