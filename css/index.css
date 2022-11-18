@@ -16,6 +16,10 @@ body {
   font-family: "Poppins", sans-serif;
 }
 
+img {
+  display: block;
+}
+
 #root {
   max-width: 700px;
   margin: 0 auto;
@@ -155,17 +159,50 @@ body {
 .disc.clicked::before {
   top: 10%;
 }
-.disc.clicked-one {
+.disc.clicked-1 {
   background-color: #7e3243;
 }
-.disc.clicked-one::before {
+.disc.clicked-1::before {
   background-color: #fd6486;
 }
-.disc.clicked-two {
+.disc.clicked-2 {
   background-color: #7f6633;
 }
-.disc.clicked-two::before {
+.disc.clicked-2::before {
   background-color: #ffce67;
+}
+
+.turn-box {
+  padding: 2rem;
+  padding-bottom: 0;
+  max-width: 15rem;
+  max-width: max-content;
+  margin: 0 auto;
+  color: #fff;
+  text-align: center;
+  position: relative;
+}
+.turn-box-background {
+  position: absolute;
+  top: -1rem;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  width: 13rem;
+  pointer-events: none;
+  user-select: none;
+}
+.turn-box-player, .turn-box-time {
+  position: relative;
+  z-index: 5;
+}
+.turn-box-player {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.turn-box-time {
+  font-size: 4rem;
+  font-weight: 600;
 }
 
 /*# sourceMappingURL=index.css.map */

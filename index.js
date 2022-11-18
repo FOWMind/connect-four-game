@@ -1,11 +1,10 @@
 const root = document.getElementById("root");
 const restartButton = document.getElementById("restart");
-const turnText = document.getElementById("turn-text");
 
-const timePerTurn = 4; // seconds
+const timePerTurn = 30; // seconds
 const players = {
-  one: "one",
-  two: "two",
+  one: "1",
+  two: "2",
 };
 const initialTurn = players.one;
 let playerWithTurn = initialTurn;
@@ -23,13 +22,10 @@ const discAmount = discsPerRow * rows;
 function render() {
   renderPlayers();
   renderDiscs(discAmount);
+  renderTurnBox();
   handleEvents();
 }
 render();
-
-// START DEBUG
-turnText.innerHTML = "Player with turn: " + playerWithTurn;
-// END DEBUG
 
 /**
  * Manage what happens with each event in the application.
@@ -60,18 +56,90 @@ function restart() {
   // Avoid restart if not necessary
   if (!someDiscClicked) return;
 
-  // Clear turn
-  playerWithTurn = initialTurn;
-  turnText.innerHTML = "Player with turn: " + playerWithTurn;
-
   // Clear timers
   clearInterval(currentTurnTimer);
   clearTimeout(currentTurnTimeout);
 
+  // Clear turn
+  playerWithTurn = initialTurn;
+  updateTurnPlayer(playerWithTurn);
+  updateTurnTime(timePerTurn);
+
   // Clear classes
   discs.forEach((disc) =>
-    disc.classList.remove("clicked", "clicked-one", "clicked-two")
+    disc.classList.remove(
+      "clicked",
+      `clicked-${players.one}`,
+      `clicked-${players.two}`
+    )
   );
+}
+
+/**
+ * Create the text for the turn box.
+ * @returns The created wrapper element with the turn box text.
+ */
+function createTurnBoxText() {
+  const wrapper = document.createDocumentFragment();
+
+  // Player text
+  const player = document.createElement("p");
+  player.setAttribute("id", "turn-box-player");
+  player.classList.add("turn-box-player");
+
+  // Time text
+  const turnTimeContainer = document.createElement("span");
+  turnTimeContainer.setAttribute("id", "turn-box-time");
+  turnTimeContainer.classList.add("turn-box-time");
+
+  wrapper.append(player, turnTimeContainer);
+  return wrapper;
+}
+
+/**
+ * Create a turn box with its text.
+ * @returns The created turn box element.
+ */
+function createTurnBox() {
+  const box = document.createElement("div");
+  box.setAttribute("id", "turn-box");
+  box.classList.add("turn-box");
+
+  const background = new Image();
+  background.setAttribute("src", "./src/images/turn-box.svg");
+  background.classList.add("turn-box-background");
+
+  const text = createTurnBoxText();
+  box.append(background, text);
+  return box;
+}
+
+/**
+ * Updates the player text in the turn box.
+ * @param {string} player - The turn player's name to update.
+ */
+function updateTurnPlayer(player) {
+  const turnPlayer = document.getElementById("turn-box-player");
+  turnPlayer.innerHTML = `Player ${player}'s turn`;
+}
+
+/**
+ * Updates the time in the turn box.
+ * @param {number} time - The turn time to update.
+ */
+function updateTurnTime(time) {
+  const turnTime = document.getElementById("turn-box-time");
+  turnTime.innerText = time + "s";
+}
+
+/**
+ * Displays the turn box on screen.
+ */
+function renderTurnBox() {
+  const turnBox = createTurnBox();
+  root.appendChild(turnBox);
+  updateTurnPlayer(playerWithTurn);
+  updateTurnTime(timePerTurn);
 }
 
 /**
@@ -111,7 +179,7 @@ function createPlayerWrapper() {
 }
 
 /**
- * Shows the player boxes in screen.
+ * Displays the player boxes on screen.
  */
 function renderPlayers() {
   const playersWrapper = createPlayerWrapper();
@@ -136,8 +204,8 @@ function createDiscWrapper() {
 }
 
 /**
- * Create a single disc as HTMLElement.
- * @returns The disc created.
+ * Create a single disc.
+ * @returns The disc created element.
  */
 function createDisc(dataId) {
   const disc = document.createElement("div");
@@ -163,7 +231,7 @@ function createDiscList(amount) {
 }
 
 /**
- * Shows all the discs created in screen.
+ * Displays all the discs created on screen.
  * @param {number} amount - The desired amount of discs to render. Must be an integer.
  */
 function renderDiscs(amount) {
@@ -266,7 +334,7 @@ function createAudio(soundName) {
 }
 
 /**
- * Play a sound by its name.
+ * Plays a sound by its name.
  * @param {string} soundName - The sound name to play (example: "pop").
  */
 function playSound(soundName) {
@@ -275,37 +343,35 @@ function playSound(soundName) {
 }
 
 /**
- * Change the current turn to opponent and show it in screen.
+ * Changes the current turn to opponent and show it on screen.
  */
 function changeTurnToOpponent() {
   playerWithTurn = playerWithTurn === players.one ? players.two : players.one;
-  turnText.innerHTML = "Player with turn: " + playerWithTurn;
+  updateTurnPlayer(playerWithTurn);
+  updateTurnTime(timePerTurn);
 }
 
 /**
- * Updates turn time every second and shows it in screen.
+ * Updates turn time every second and shows it on screen.
  * @returns The turn interval identifier.
  */
 function updateTurnTimeEachSecond() {
   let timeLeft = timePerTurn;
-  console.log("time left: ", timeLeft);
   timer = setInterval(() => {
     // each second
     timeLeft--;
-    console.log("time left: ", timeLeft);
+    updateTurnTime(timeLeft);
   }, 1000);
   return timer;
 }
 
 /**
- * Change the current turn to opponent when turn time ends.
+ * Changes the current turn to opponent when turn time ends.
  * @returns The turn timeout identifier.
  */
 function changeTurnAfterTimeout() {
   timeout = setTimeout(() => {
-    console.log("timeout.");
-    changeTurnToOpponent();
-    clearInterval(currentTurnTimer);
+    handleTurnChange();
   }, timePerTurn * 1000);
   return timeout;
 }
@@ -315,8 +381,8 @@ function changeTurnAfterTimeout() {
  */
 function handleTurnChange() {
   changeTurnToOpponent();
-  if (currentTurnTimer !== undefined) clearInterval(currentTurnTimer);
-  if (currentTurnTimeout !== undefined) clearTimeout(currentTurnTimeout);
+  clearInterval(currentTurnTimer);
+  clearTimeout(currentTurnTimeout);
 
   currentTurnTimer = updateTurnTimeEachSecond();
   currentTurnTimeout = changeTurnAfterTimeout();
