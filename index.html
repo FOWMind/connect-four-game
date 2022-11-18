@@ -4,14 +4,31 @@
     <meta charset="UTF-8" />
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <!-- Own styles -->
     <link rel="stylesheet" href="./css/index.css" />
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap"
+      rel="stylesheet"
+    />
     <title>Connect Four game</title>
   </head>
   <body>
-    <div id="root"></div>
-    <h1 id="current-player" style="margin-top: 2rem"></h1>
-    <button id="p1">player 1</button>
-    <button id="p2">player 2</button>
+    <div id="root">
+      <header class="header">
+        <button class="button">Menu</button>
+        <div class="balls">
+          <div class="ball"></div>
+          <div class="ball"></div>
+          <div class="ball"></div>
+          <div class="ball"></div>
+        </div>
+        <button class="button" id="restart">Restart</button>
+      </header>
+    </div>
+    <h1 id="turn-text" style="margin-top: 2rem"></h1>
     <script src="./index.js"></script>
   </body>
 </html>

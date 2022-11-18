@@ -2,11 +2,124 @@
 * {
   margin: 0;
   padding: 0;
+}
+*, *::before, *::after {
   box-sizing: border-box;
+}
+
+html {
+  line-height: 1.15;
 }
 
 body {
   background-color: #7945ff;
+  font-family: "Poppins", sans-serif;
+}
+
+img {
+  display: block;
+}
+
+#root {
+  max-width: 700px;
+  margin: 0 auto;
+  display: grid;
+  place-content: center;
+}
+
+.button {
+  cursor: pointer;
+  outline: none;
+  border: none;
+  border-radius: 50px;
+  text-transform: uppercase;
+  font-size: 0.9rem;
+  font-weight: 600;
+  display: inline-block;
+  padding: 0.5rem 1.5rem;
+  background-color: #5b2cd5;
+  color: #fff;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 2rem 0;
+}
+
+.balls {
+  max-width: 45px;
+  margin: 0 0.5rem;
+}
+.balls .ball {
+  width: 20px;
+  height: 20px;
+  display: inline-block;
+  border-radius: 50px;
+  background-color: #fd6486;
+  border: 2px solid #000000;
+  box-shadow: 0 2.5px 0 0 #000000;
+}
+.balls .ball:nth-of-type(2), .balls .ball:nth-of-type(3) {
+  background-color: #ffce67;
+}
+
+.players-wrapper {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  flex-wrap: wrap;
+}
+.players-wrapper .player:first-of-type .player-avatar {
+  left: -25px;
+}
+.players-wrapper .player:last-of-type .player-avatar {
+  right: -25px;
+}
+
+.player {
+  padding: 1.5rem;
+  border-radius: 15px;
+  display: inline-block;
+  background-color: #fff;
+  border: 3px solid #000000;
+  box-shadow: 0 10px 0 0 #000000;
+  position: relative;
+}
+.player-avatar {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 5;
+  width: 50px;
+  height: 50px;
+}
+.player-avatar::before {
+  content: "";
+  position: absolute;
+  bottom: -10%;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  width: 100%;
+  height: 100%;
+  background-color: #000000;
+  border-radius: 50%;
+}
+.player-avatar-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  position: relative;
+  z-index: 5;
+}
+.player-name {
+  display: inline-block;
+  text-transform: uppercase;
+  font-weight: 600;
+  font-size: 1.25rem;
+  margin: 0 0.5rem;
 }
 
 .disc-wrapper {
@@ -14,21 +127,11 @@ body {
   grid-template-columns: repeat(7, 50px);
   gap: 10px;
   padding: 10px;
+  margin-top: 2rem;
   border-radius: 15px;
   background-color: #ffffff;
   border: 3px solid #000000;
-  position: relative;
-}
-.disc-wrapper::before {
-  content: "";
-  position: absolute;
-  top: 4%;
-  left: -0.5%;
-  z-index: -1;
-  width: 101%;
-  height: 100%;
-  border-radius: 15px;
-  background-color: #000000;
+  box-shadow: 0 10px 0 0 #000000;
 }
 
 .disc {
@@ -56,17 +159,50 @@ body {
 .disc.clicked::before {
   top: 10%;
 }
-.disc.clicked-one {
+.disc.clicked-1 {
   background-color: #7e3243;
 }
-.disc.clicked-one::before {
+.disc.clicked-1::before {
   background-color: #fd6486;
 }
-.disc.clicked-two {
+.disc.clicked-2 {
   background-color: #7f6633;
 }
-.disc.clicked-two::before {
+.disc.clicked-2::before {
   background-color: #ffce67;
+}
+
+.turn-box {
+  padding: 2rem;
+  padding-bottom: 0;
+  max-width: 15rem;
+  max-width: max-content;
+  margin: 0 auto;
+  color: #fff;
+  text-align: center;
+  position: relative;
+}
+.turn-box-background {
+  position: absolute;
+  top: -1rem;
+  left: 50%;
+  z-index: 1;
+  transform: translateX(-50%);
+  width: 13rem;
+  pointer-events: none;
+  user-select: none;
+}
+.turn-box-player, .turn-box-time {
+  position: relative;
+  z-index: 5;
+}
+.turn-box-player {
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.turn-box-time {
+  font-size: 4rem;
+  font-weight: 600;
 }
 
 /*# sourceMappingURL=index.css.map */
