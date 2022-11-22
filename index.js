@@ -1,14 +1,12 @@
 /*
 TODO
-- Hide top buttons on main menu.
+- [x] Hide top buttons on main menu.
 - Separate code into files.
 - Remake game functionality:
   Connect 4 discs, either horizontal, vertical o diagonal. The discs MUST BEEN DROPPED FROM THE TOP.
 */
 
 const root = document.getElementById("root");
-const menuButton = document.getElementById("menu-button");
-const restartButton = document.getElementById("restart-button");
 
 const timePerTurn = 30; // seconds
 const players = {
@@ -19,6 +17,7 @@ const initialTurn = players.one;
 let playerWithTurn = initialTurn;
 let currentTurnTimer;
 let currentTurnTimeout;
+let validDiscs;
 
 // Render
 const discsPerRow = 7;
@@ -26,23 +25,24 @@ const rows = 6;
 const discAmount = discsPerRow * rows;
 
 /**
- * Handles the game render.
- */
-function renderGame(mode) {
-  renderGameWrapper();
-  renderPlayers();
-  renderDiscs(discAmount);
-  renderTurnBox();
-}
-
-init();
-
-/**
  * Handles the application initialization.
  */
 function init() {
   renderMenu();
   handleEvents();
+}
+init();
+
+/**
+ * Handles the game render.
+ * @param {string} mode - The game mode to use.
+ */
+function renderGame(mode) {
+  renderGameWrapper();
+  renderGameHeader();
+  renderPlayers();
+  renderDiscs(discAmount);
+  renderTurnBox();
 }
 
 /**
@@ -86,6 +86,7 @@ function createMenuButtons() {
  * Displays the menu on screen and hide the game.
  */
 function showMenu() {
+  stopGame();
   const gameWrapper = document.getElementById("game");
   gameWrapper.remove();
   renderMenu();
@@ -108,6 +109,7 @@ function renderMenu() {
   const menuWrapper = document.createElement("div");
   const menuButtons = createMenuButtons();
   menuWrapper.setAttribute("id", "menu");
+  menuWrapper.classList.add("menu");
   menuWrapper.appendChild(menuButtons);
   root.appendChild(menuWrapper);
 }
@@ -117,9 +119,14 @@ function renderMenu() {
  */
 function handleEvents() {
   document.addEventListener("click", ({ target }) => {
+    // Menu
     const playCPUButton = document.getElementById("play-vs-cpu-button");
     const playPlayerButton = document.getElementById("play-vs-player-button");
     const gameRulesButton = document.getElementById("game-rules-button");
+
+    // Game
+    const menuButton = document.getElementById("menu-button");
+    const restartButton = document.getElementById("restart-button");
     const isClickedDisc = target.id === "disc";
 
     if (target === playCPUButton) {
@@ -140,15 +147,15 @@ function handleEvents() {
 }
 
 /**
- * Restart the current game session.
+ * Stop the current game session.
  */
-function restart() {
+function stopGame() {
   const discs = getAllDiscs();
   const someDiscClicked = discs.some((disc) => {
     return disc.classList.contains("clicked");
   });
 
-  // Avoid restart if not necessary
+  // Avoid stop if not necessary
   if (!someDiscClicked) return;
 
   // Clear timers
@@ -157,6 +164,7 @@ function restart() {
 
   // Clear turn
   playerWithTurn = initialTurn;
+  validDiscs = undefined;
   updateTurnPlayer(playerWithTurn);
   updateTurnTime(timePerTurn);
 
@@ -299,6 +307,53 @@ function renderPlayers() {
 }
 
 /**
+ * Create a game button.
+ * @param {string} text - The text to use in the game button.
+ * @returns The created button element.
+ */
+function createGameButton(text) {
+  if (!text) {
+    throw new Error("text must be provided to create a game button.");
+  }
+  const button = document.createElement("button");
+  const buttonText = document.createTextNode(text);
+  button.appendChild(buttonText);
+  button.classList.add("button");
+  return button;
+}
+
+/**
+ * Create a game icon with circles.
+ * @returns The ball wrapper element.
+ */
+function createGameBalls() {
+  const balls = document.createElement("div");
+  balls.classList.add("balls");
+  for (let i = 0; i < 4; i++) {
+    const ball = document.createElement("div");
+    ball.classList.add("ball");
+    balls.appendChild(ball);
+  }
+  return balls;
+}
+
+/**
+ * Displays the game header on screen.
+ */
+function renderGameHeader() {
+  const gameWrapper = document.getElementById("game");
+  const header = document.createElement("div");
+  const menuButton = createGameButton("Menu");
+  const restartButton = createGameButton("Restart");
+  const balls = createGameBalls();
+  header.classList.add("game-header");
+  menuButton.setAttribute("id", "menu-button");
+  restartButton.setAttribute("id", "restart-button");
+  header.append(menuButton, balls, restartButton);
+  gameWrapper.appendChild(header);
+}
+
+/**
  * Create a wrapper for the discs that will be rendered.
  * @returns The disc wrapper element.
  */
@@ -332,7 +387,6 @@ function createDiscList(amount) {
     const disc = createDisc(i);
     discList.push(disc);
   }
-
   return discList;
 }
 
@@ -495,7 +549,6 @@ function handleTurnChange() {
   currentTurnTimeout = changeTurnAfterTimeout();
 }
 
-let validDiscs;
 /**
  * Handles the visual and sound effects of a clicked disc.
  * @param {HTMLElement} clickedDisc - The clicked disc captured by the event disc.
