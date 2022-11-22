@@ -7,9 +7,10 @@ $discWrapperPadding: $discMargin;
 $fwMedium: 600;
 
 /* Colors */
-$primaryText: #fff;
 $primaryBg: #fff;
+$primaryText: #000;
 $secondaryBg: #000;
+$secondaryText: #fff;
 $bgClr: #7945ff;
 $buttonBg: #5b2cd5;
 
@@ -59,18 +60,64 @@ img {
   place-content: center;
 }
 
-.button {
+.button,
+.menu-button {
   cursor: pointer;
   outline: none;
   border: none;
-  border-radius: 50px;
   text-transform: uppercase;
-  font-size: 0.9rem;
   font-weight: $fwMedium;
+}
+
+.button {
   display: inline-block;
+  font-size: 0.9rem;
   padding: 0.5rem 1.5rem;
   background-color: $buttonBg;
+  color: $secondaryText;
+  border-radius: 50px;
+}
+
+.menu-button {
+  display: block;
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.25rem;
+  background-color: $primaryBg;
+  text-align: left;
+  font-size: 1.5rem;
   color: $primaryText;
+  border-radius: 15px;
+  border: 3px solid $secondaryBg;
+  box-shadow: 0 10px 0 0 $secondaryBg;
+  transition: transform 0.15s;
+  position: relative;
+
+  &::before {
+    content: "";
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 20%;
+  }
+
+  &:hover {
+    transform: translateY(-5px);
+
+    &::before {
+      bottom: -10px;
+    }
+  }
+
+  &.primary {
+    background-color: $playerOneClr;
+    color: $secondaryText;
+  }
+
+  &.secondary {
+    background-color: $playerTwoClr;
+  }
 }
 
 .header {
@@ -235,7 +282,7 @@ img {
   max-width: 15rem;
   max-width: max-content;
   margin: 0 auto;
-  color: $primaryText;
+  color: $secondaryText;
   text-align: center;
   position: relative;
 

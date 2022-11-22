@@ -1,5 +1,14 @@
+/*
+TODO
+- Hide top buttons on main menu.
+- Separate code into files.
+- Remake game functionality:
+  Connect 4 discs, either horizontal, vertical o diagonal. The discs MUST BEEN DROPPED FROM THE TOP.
+*/
+
 const root = document.getElementById("root");
-const restartButton = document.getElementById("restart");
+const menuButton = document.getElementById("menu-button");
+const restartButton = document.getElementById("restart-button");
 
 const timePerTurn = 30; // seconds
 const players = {
@@ -17,26 +26,112 @@ const rows = 6;
 const discAmount = discsPerRow * rows;
 
 /**
- * Handles the application render.
+ * Handles the game render.
  */
-function render() {
+function renderGame(mode) {
+  renderGameWrapper();
   renderPlayers();
   renderDiscs(discAmount);
   renderTurnBox();
+}
+
+init();
+
+/**
+ * Handles the application initialization.
+ */
+function init() {
+  renderMenu();
   handleEvents();
 }
-render();
+
+/**
+ * Create a menu button.
+ * @param {string} text - Text to use in the button.
+ * @returns The button element.
+ */
+function createMenuButton(text) {
+  if (!text) {
+    throw new Error("a text must be provided for the button.");
+  }
+  const button = document.createElement("button");
+  button.classList.add("menu-button");
+  const buttonText = document.createTextNode(text);
+  button.appendChild(buttonText);
+  return button;
+}
+
+/**
+ * Create all menu buttons.
+ * @returns The button wrapper element.
+ */
+function createMenuButtons() {
+  const wrapper = document.createElement("div");
+  const playCPU = createMenuButton("Play vs CPU");
+  const playPlayer = createMenuButton("Play vs Player");
+  const gameRules = createMenuButton("Game rules");
+
+  wrapper.classList.add("menu-buttons");
+  playCPU.classList.add("primary");
+  playCPU.setAttribute("id", "play-vs-cpu-button");
+  playPlayer.classList.add("secondary");
+  playPlayer.setAttribute("id", "play-vs-player-button");
+  gameRules.setAttribute("id", "game-rules-button");
+
+  wrapper.append(playCPU, playPlayer, gameRules);
+  return wrapper;
+}
+
+/**
+ * Displays the menu on screen and hide the game.
+ */
+function showMenu() {
+  const gameWrapper = document.getElementById("game");
+  gameWrapper.remove();
+  renderMenu();
+}
+
+/**
+ * Displays the game layout on screen and hide the menu.
+ * @param {string} mode - Game mode for the renderGame function.
+ */
+function showGame(mode) {
+  const menu = document.getElementById("menu");
+  menu.remove();
+  renderGame(mode);
+}
+
+/**
+ * Displays the menu on screen.
+ */
+function renderMenu() {
+  const menuWrapper = document.createElement("div");
+  const menuButtons = createMenuButtons();
+  menuWrapper.setAttribute("id", "menu");
+  menuWrapper.appendChild(menuButtons);
+  root.appendChild(menuWrapper);
+}
 
 /**
  * Manage what happens with each event in the application.
  */
 function handleEvents() {
-  document.addEventListener("click", (e) => {
-    const target = e.target;
+  document.addEventListener("click", ({ target }) => {
+    const playCPUButton = document.getElementById("play-vs-cpu-button");
+    const playPlayerButton = document.getElementById("play-vs-player-button");
+    const gameRulesButton = document.getElementById("game-rules-button");
     const isClickedDisc = target.id === "disc";
-    const isRestartButton = target === restartButton;
 
-    if (isRestartButton) {
+    if (target === playCPUButton) {
+      return console.log("play vs cpu");
+    } else if (target === playPlayerButton) {
+      console.log("play vs player");
+      return showGame("player");
+    } else if (target === gameRulesButton) {
+      return console.log("opening game rules");
+    } else if (target === menuButton) {
+      return showMenu();
+    } else if (target === restartButton) {
       return restart();
     } else if (isClickedDisc) {
       return handleDiscClick(target);
@@ -73,6 +168,15 @@ function restart() {
       `clicked-${players.two}`
     )
   );
+}
+
+/**
+ * Render a game wrapper in DOM for the game elements.
+ */
+function renderGameWrapper() {
+  const wrapper = document.createElement("div");
+  wrapper.setAttribute("id", "game");
+  root.appendChild(wrapper);
 }
 
 /**
@@ -137,7 +241,8 @@ function updateTurnTime(time) {
  */
 function renderTurnBox() {
   const turnBox = createTurnBox();
-  root.appendChild(turnBox);
+  const gameWrapper = document.getElementById("game");
+  gameWrapper.appendChild(turnBox);
   updateTurnPlayer(playerWithTurn);
   updateTurnTime(timePerTurn);
 }
@@ -182,6 +287,7 @@ function createPlayerWrapper() {
  * Displays the player boxes on screen.
  */
 function renderPlayers() {
+  const gameWrapper = document.getElementById("game");
   const playersWrapper = createPlayerWrapper();
   const playerOne = createPlayer("Player 1", "./src/images/player-1.svg");
   const playerTwo = createPlayer(
@@ -189,7 +295,7 @@ function renderPlayers() {
     "./src/images/player-2-reversed.svg"
   );
   playersWrapper.append(playerOne, playerTwo);
-  root.appendChild(playersWrapper);
+  gameWrapper.appendChild(playersWrapper);
 }
 
 /**
@@ -235,13 +341,14 @@ function createDiscList(amount) {
  * @param {number} amount - The desired amount of discs to render. Must be an integer.
  */
 function renderDiscs(amount) {
+  const gameWrapper = document.getElementById("game");
   const discList = createDiscList(amount);
   const discWrapper = createDiscWrapper();
 
   discList.forEach((disc) => {
     discWrapper.appendChild(disc);
   });
-  root.appendChild(discWrapper);
+  gameWrapper.appendChild(discWrapper);
 }
 
 /**
@@ -388,20 +495,26 @@ function handleTurnChange() {
   currentTurnTimeout = changeTurnAfterTimeout();
 }
 
+let validDiscs;
 /**
  * Handles the visual and sound effects of a clicked disc.
  * @param {HTMLElement} clickedDisc - The clicked disc captured by the event disc.
  */
 function handleDiscClick(clickedDisc) {
   const previouslyClicked = clickedDisc.classList.contains("clicked");
+  const validClick =
+    validDiscs &&
+    Object.entries(validDiscs).some((entry) => entry[1] === clickedDisc);
   if (previouslyClicked) return;
+  if (validClick === false) return;
+  console.log("valid element");
 
   playSound("pop");
   clickedDisc.classList.add("clicked", "clicked-" + playerWithTurn);
   handleTurnChange();
 
-  const siblingDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
-  const canContinue = turnCanContinue(siblingDiscs);
-  console.log({ clickedDisc, ...siblingDiscs });
-  console.log({ canContinue });
+  validDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
+  // const canContinue = turnCanContinue(validDiscs);
+  // console.log({ canContinue });
+  // console.log({ clickedDisc, ...validDiscs });
 }
