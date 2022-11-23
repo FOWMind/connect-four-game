@@ -8,6 +8,7 @@ TODO
 
 const root = document.getElementById("root");
 
+const discSize = 50; // pixels
 const timePerTurn = 30; // seconds
 const players = {
   one: "1",
@@ -21,6 +22,7 @@ let validDiscs;
 
 // Render
 const discsPerRow = 7;
+const columns = 7;
 const rows = 6;
 const discAmount = discsPerRow * rows;
 
@@ -41,8 +43,44 @@ function renderGame(mode) {
   renderGameWrapper();
   renderGameHeader();
   renderPlayers();
-  renderDiscs(discAmount);
+  renderColumns(columns);
+  renderArrow();
   renderTurnBox();
+}
+
+/**
+ * Create an arrow with default position in board top position.
+ * @returns The created arrow element.
+ */
+function createArrow() {
+  const board = document.getElementById("board");
+  const boardPosition = board.getBoundingClientRect();
+  const arrow = new Image();
+  arrow.setAttribute("src", "./src/images/arrow-down.svg");
+  arrow.classList.add("arrow");
+  arrow.setAttribute("id", "arrow");
+  arrow.style.top = Math.round(boardPosition.top) - discSize / 2 + "px";
+  return arrow;
+}
+
+/**
+ * Displays the created arrow in the board.
+ */
+function renderArrow() {
+  const board = document.getElementById("board");
+  const arrow = createArrow();
+  board.appendChild(arrow);
+}
+
+/**
+ * Moves the rendered arrow to the position of the disc passed.
+ * @param {HTMLElement} disc - A disc to take its position and assign it to the arrow.
+ */
+function moveArrow(disc) {
+  const discPosition = disc.getBoundingClientRect();
+  const arrow = document.getElementById("arrow");
+  arrow.style.top = Math.round(discPosition.top);
+  arrow.style.left = Math.round(discPosition.left) + "px";
 }
 
 /**
@@ -256,7 +294,7 @@ function renderTurnBox() {
 }
 
 /**
- *
+ * Create a player box.
  * @param {string} playerName - A name for the new player.
  * @param {string} playerAvatarPath - The path of the avatar image to use.
  * @returns The player container element.
@@ -324,17 +362,17 @@ function createGameButton(text) {
 
 /**
  * Create a game icon with circles.
- * @returns The ball wrapper element.
+ * @returns The icon element.
  */
-function createGameBalls() {
-  const balls = document.createElement("div");
-  balls.classList.add("balls");
+function createGameIcon() {
+  const icon = document.createElement("div");
+  icon.classList.add("game-icon");
   for (let i = 0; i < 4; i++) {
-    const ball = document.createElement("div");
-    ball.classList.add("ball");
-    balls.appendChild(ball);
+    const circle = document.createElement("div");
+    circle.classList.add("circle");
+    icon.appendChild(circle);
   }
-  return balls;
+  return icon;
 }
 
 /**
@@ -345,27 +383,17 @@ function renderGameHeader() {
   const header = document.createElement("div");
   const menuButton = createGameButton("Menu");
   const restartButton = createGameButton("Restart");
-  const balls = createGameBalls();
+  const gameIcon = createGameIcon();
   header.classList.add("game-header");
   menuButton.setAttribute("id", "menu-button");
   restartButton.setAttribute("id", "restart-button");
-  header.append(menuButton, balls, restartButton);
+  header.append(menuButton, gameIcon, restartButton);
   gameWrapper.appendChild(header);
 }
 
 /**
- * Create a wrapper for the discs that will be rendered.
- * @returns The disc wrapper element.
- */
-function createDiscWrapper() {
-  const wrapper = document.createElement("div");
-  wrapper.setAttribute("class", "disc-wrapper");
-  wrapper.setAttribute("id", "disc-wrapper");
-  return wrapper;
-}
-
-/**
  * Create a single disc.
+ * @param {number | string} dataId - The desired data-id for the disc.
  * @returns The disc created element.
  */
 function createDisc(dataId) {
@@ -377,105 +405,53 @@ function createDisc(dataId) {
 }
 
 /**
- * Create a list of discs.
- * @param {number} amount - The desired amount of discs to create. Must be an integer.
- * @returns A list containing all the discs.
+ * Create a column.
+ * @returns The created column element.
  */
-function createDiscList(amount) {
-  const discList = [];
-  for (let i = 0; i < amount; i++) {
+function createColumn() {
+  const column = document.createElement("div");
+  column.classList.add("column");
+  for (let i = 1; i <= rows; i++) {
     const disc = createDisc(i);
-    discList.push(disc);
+    column.appendChild(disc);
   }
-  return discList;
+  return column;
 }
 
 /**
- * Displays all the discs created on screen.
- * @param {number} amount - The desired amount of discs to render. Must be an integer.
+ * Create a list of columns.
+ * @param {number} amount - The desired amount of columns to create. Must be an integer.
+ * @returns The board that contains the columns.
  */
-function renderDiscs(amount) {
+function createColumns(amount) {
+  const board = document.createElement("div");
+  board.classList.add("board");
+  board.setAttribute("id", "board");
+  for (let i = 1; i <= amount; i++) {
+    const column = createColumn();
+    board.appendChild(column);
+  }
+  return board;
+}
+
+/**
+ * Displays all columns created on screen.
+ * @param {number} amount - The desired amount of columns to create. Must be an integer.
+ */
+function renderColumns(amount) {
   const gameWrapper = document.getElementById("game");
-  const discList = createDiscList(amount);
-  const discWrapper = createDiscWrapper();
-
-  discList.forEach((disc) => {
-    discWrapper.appendChild(disc);
-  });
-  gameWrapper.appendChild(discWrapper);
+  const board = createColumns(amount);
+  gameWrapper.appendChild(board);
 }
 
 /**
- * Get all sibling discs around the disc passed.
- * @param {HTMLElement} disc - A specific disc element with data-id attribute.
- * @param {number} discsPerRow - number of discs rendered in a row. Must be an integer.
- * @returns All sibling discs.
- */
-function getSiblingDiscs(disc, discsPerRow) {
-  const allDiscs = document.getElementsByClassName("disc");
-  const dataId = Number(disc.getAttribute("data-id"));
-  if (dataId === undefined || isNaN(dataId)) {
-    throw new Error("the disc passed must have data-id attribute.");
-  }
-  // left and right side
-  const leftCondition = dataId % discsPerRow !== 0; // First disc in a row
-  const left = leftCondition && allDiscs[dataId - 1];
-  const rightCondition = (dataId + 1) % discsPerRow !== 0; // Last disc in a row
-  const right = rightCondition && allDiscs[dataId + 1];
-
-  // top side
-  const topId = dataId - discsPerRow;
-  const top = allDiscs[topId];
-  const topLeft = top && left && allDiscs[topId - 1];
-  const topRight = top && right && allDiscs[topId + 1];
-
-  // bottom side
-  const bottomId = dataId + discsPerRow;
-  const bottom = allDiscs[bottomId];
-  const bottomLeft = bottom && left && allDiscs[bottomId - 1];
-  const bottomRight = bottom && right && allDiscs[bottomId + 1];
-
-  /**
-   * Contains only valid siblings (not empty)
-   */
-  let allSibling = Object.entries({
-    left,
-    right,
-    top,
-    topLeft,
-    topRight,
-    bottom,
-    bottomLeft,
-    bottomRight,
-  });
-  allSibling = allSibling.filter((entry) => entry[1]);
-  allSibling = Object.fromEntries(allSibling);
-  return allSibling;
-}
-
-/**
- * Get all discs from disc wrapper.
- * @returns All discs found from disc wrapper.
+ * Get all discs from the board.
+ * @returns All discs found in the board.
  */
 function getAllDiscs() {
-  const discsWrapper = document.getElementById("disc-wrapper");
-  const allDiscs = [...discsWrapper.children];
+  const board = document.getElementById("board");
+  const allDiscs = [...board.children];
   return allDiscs;
-}
-
-/**
- * Calc if it is possible to continue the player turn.
- * @param {object} siblingDiscs - All the sibling discs of a specific disc.
- * @returns Whether the turn can continue or not.
- */
-function turnCanContinue(siblingDiscs) {
-  const turnCanContinue = Object.entries(siblingDiscs).some((sibling) => {
-    const siblingElement = sibling[1];
-    const siblingPreviouslyClicked =
-      siblingElement?.classList.contains("clicked");
-    return siblingPreviouslyClicked ? false : true;
-  });
-  return turnCanContinue;
 }
 
 /**
@@ -550,24 +526,101 @@ function handleTurnChange() {
 }
 
 /**
+ * Handles what happens when the player clicks a disc.
+ * @param {HTMLElement} clickedDisc - The clicked disc.
+ */
+function handleDiscClick(clickedDisc) {
+  const discId = Number(clickedDisc.getAttribute("data-id"));
+  const isOnFirstRow = discId === 1;
+  if (!isOnFirstRow) return;
+  playSound("pop");
+  moveArrow(clickedDisc);
+  console.log("dropping dame");
+}
+
+/**
  * Handles the visual and sound effects of a clicked disc.
  * @param {HTMLElement} clickedDisc - The clicked disc captured by the event disc.
  */
-function handleDiscClick(clickedDisc) {
-  const previouslyClicked = clickedDisc.classList.contains("clicked");
-  const validClick =
-    validDiscs &&
-    Object.entries(validDiscs).some((entry) => entry[1] === clickedDisc);
-  if (previouslyClicked) return;
-  if (validClick === false) return;
-  console.log("valid element");
+// function handleDiscClick(clickedDisc) {
+//   const previouslyClicked = clickedDisc.classList.contains("clicked");
+//   const validClick =
+//     validDiscs &&
+//     Object.entries(validDiscs).some((entry) => entry[1] === clickedDisc);
+//   if (previouslyClicked) return;
+//   if (validClick === false) return;
+//   console.log("valid element");
 
-  playSound("pop");
-  clickedDisc.classList.add("clicked", "clicked-" + playerWithTurn);
-  handleTurnChange();
+//   playSound("pop");
+//   clickedDisc.classList.add("clicked", "clicked-" + playerWithTurn);
+//   handleTurnChange();
 
-  validDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
-  // const canContinue = turnCanContinue(validDiscs);
-  // console.log({ canContinue });
-  // console.log({ clickedDisc, ...validDiscs });
-}
+//   validDiscs = getSiblingDiscs(clickedDisc, discsPerRow);
+//   // const canContinue = turnCanContinue(validDiscs);
+//   // console.log({ canContinue });
+//   // console.log({ clickedDisc, ...validDiscs });
+//   moveArrow(clickedDisc);
+// }
+
+/**
+ * Calc if it is possible to continue the player turn.
+ * @param {object} siblingDiscs - All the sibling discs of a specific disc.
+ * @returns Whether the turn can continue or not.
+ */
+// function turnCanContinue(siblingDiscs) {
+//   const turnCanContinue = Object.entries(siblingDiscs).some((sibling) => {
+//     const siblingElement = sibling[1];
+//     const siblingPreviouslyClicked =
+//       siblingElement?.classList.contains("clicked");
+//     return siblingPreviouslyClicked ? false : true;
+//   });
+//   return turnCanContinue;
+// }
+
+/**
+ * Get all sibling discs around the disc passed.
+ * @param {HTMLElement} disc - A specific disc element with data-id attribute.
+ * @param {number} discsPerRow - number of discs rendered in a row. Must be an integer.
+ * @returns All sibling discs.
+ */
+// function getSiblingDiscs(disc, discsPerRow) {
+//   const allDiscs = document.getElementsByClassName("disc");
+//   const dataId = Number(disc.getAttribute("data-id"));
+//   if (dataId === undefined || isNaN(dataId)) {
+//     throw new Error("the disc passed must have data-id attribute.");
+//   }
+//   // left and right side
+//   const leftCondition = dataId % discsPerRow !== 0; // First disc in a row
+//   const left = leftCondition && allDiscs[dataId - 1];
+//   const rightCondition = (dataId + 1) % discsPerRow !== 0; // Last disc in a row
+//   const right = rightCondition && allDiscs[dataId + 1];
+
+//   // top side
+//   const topId = dataId - discsPerRow;
+//   const top = allDiscs[topId];
+//   const topLeft = top && left && allDiscs[topId - 1];
+//   const topRight = top && right && allDiscs[topId + 1];
+
+//   // bottom side
+//   const bottomId = dataId + discsPerRow;
+//   const bottom = allDiscs[bottomId];
+//   const bottomLeft = bottom && left && allDiscs[bottomId - 1];
+//   const bottomRight = bottom && right && allDiscs[bottomId + 1];
+
+//   /**
+//    * Contains only valid siblings (not empty)
+//    */
+//   let allSibling = Object.entries({
+//     left,
+//     right,
+//     top,
+//     topLeft,
+//     topRight,
+//     bottom,
+//     bottomLeft,
+//     bottomRight,
+//   });
+//   allSibling = allSibling.filter((entry) => entry[1]);
+//   allSibling = Object.fromEntries(allSibling);
+//   return allSibling;
+// }

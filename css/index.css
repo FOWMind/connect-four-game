@@ -93,11 +93,11 @@ img {
   padding: 2rem 0;
 }
 
-.balls {
+.game-icon {
   max-width: 45px;
   margin: 0 0.5rem;
 }
-.balls .ball {
+.game-icon .circle {
   width: 20px;
   height: 20px;
   display: inline-block;
@@ -106,7 +106,7 @@ img {
   border: 2px solid #000000;
   box-shadow: 0 2.5px 0 0 #000000;
 }
-.balls .ball:nth-of-type(2), .balls .ball:nth-of-type(3) {
+.game-icon .circle:nth-of-type(2), .game-icon .circle:nth-of-type(3) {
   background-color: #ffce67;
 }
 
@@ -167,7 +167,7 @@ img {
   margin: 0 0.5rem;
 }
 
-.disc-wrapper {
+.board {
   display: inline-grid;
   grid-template-columns: repeat(7, 50px);
   gap: 10px;
@@ -179,9 +179,16 @@ img {
   box-shadow: 0 10px 0 0 #000000;
 }
 
+.arrow {
+  width: 50px;
+  position: absolute;
+  transform: translateY(50%);
+}
+
 .disc {
   width: 50px;
   height: 50px;
+  margin-bottom: 10px;
   background-color: #000000;
   border: 3px solid #000000;
   cursor: pointer;

@@ -131,11 +131,11 @@ img {
   padding: 2rem 0;
 }
 
-.balls {
+.game-icon {
   max-width: 45px;
   margin: 0 0.5rem;
 
-  .ball {
+  .circle {
     width: 20px;
     height: 20px;
     display: inline-block;
@@ -220,7 +220,7 @@ img {
   }
 }
 
-.disc-wrapper {
+.board {
   display: inline-grid;
   grid-template-columns: repeat($columnsAmount, $discSize);
   gap: $discMargin;
@@ -232,9 +232,16 @@ img {
   box-shadow: 0 10px 0 0 $secondaryBg;
 }
 
+.arrow {
+  width: 50px;
+  position: absolute;
+  transform: translateY(50%);
+}
+
 .disc {
   width: $discSize;
   height: $discSize;
+  margin-bottom: $discMargin;
   background-color: $secondaryBg;
   border: 3px solid $secondaryBg;
   cursor: pointer;
