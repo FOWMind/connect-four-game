@@ -208,19 +208,19 @@ img {
   transform: translateX(-50%);
   background-color: #7945ff;
 }
-.disc.clicked::before {
+.disc.filled::before {
   top: 10%;
 }
-.disc.clicked-1 {
+.disc.filled-1 {
   background-color: #7e3243;
 }
-.disc.clicked-1::before {
+.disc.filled-1::before {
   background-color: #fd6486;
 }
-.disc.clicked-2 {
+.disc.filled-2 {
   background-color: #7f6633;
 }
-.disc.clicked-2::before {
+.disc.filled-2::before {
   background-color: #ffce67;
 }
 

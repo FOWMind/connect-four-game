@@ -264,7 +264,7 @@ img {
     background-color: $discBg;
   }
 
-  &.clicked {
+  &.filled {
     &::before {
       top: 10%;
     }
