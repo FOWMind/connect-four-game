@@ -103,7 +103,7 @@ export default class GameManager {
   }
 
   /**
-   * Handles what happen with the turns.
+   * Handles what happen with the game turns.
    */
   handleTurnChange() {
     this.changeTurnToOpponent();

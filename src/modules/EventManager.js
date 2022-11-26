@@ -47,23 +47,17 @@ export default class EventManager {
    * @param {HTMLElement} clickedDisc - The clicked disc.
    */
   handleDiscClick(clickedDisc) {
-    const discId = Number(clickedDisc.getAttribute("data-id"));
-    const isOnFirstRow = discId === 1;
+    const discPositionY = Number(clickedDisc.getAttribute("position-y"));
+    const isOnFirstRow = discPositionY === 1;
     if (!isOnFirstRow) return;
 
-    this.utils.lastIndex = -1;
-    const clickedDiscColumn = clickedDisc.parentNode;
-    const lastDiscAvailable =
-      this.utils.getLastDiscAvailable(clickedDiscColumn);
-    if (!lastDiscAvailable) return;
+    const lastAvailableDisc = this.utils.handleLastAvailableDisc(clickedDisc);
+    if (!lastAvailableDisc) return;
 
-    lastDiscAvailable.classList.add(
-      "filled",
-      "filled-" + this.gameManager.playerWithTurn
-    );
+    this.uiManager.moveArrow(clickedDisc);
+    this.uiManager.fillDisc(lastAvailableDisc, this.gameManager.playerWithTurn);
     this.audioManager.playSound("pop");
     this.gameManager.handleTurnChange();
-    this.uiManager.moveArrow(clickedDisc);
     console.log("dropping dame");
   }
 }

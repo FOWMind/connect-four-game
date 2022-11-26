@@ -10,13 +10,12 @@ export default class UIManager {
   }
   /**
    * Handles the game render.
-   * @param {string} mode - The game mode to use.
    */
-  renderGame(mode) {
+  renderGame() {
     this.renderGameWrapper();
     this.renderGameHeader();
     this.renderPlayers();
-    this.renderColumns(this.columns);
+    this.renderBoard();
     this.renderArrow();
     this.renderTurnBox();
   }
@@ -256,7 +255,7 @@ export default class UIManager {
 
   /**
    * Create a game icon with circles.
-   * @returns The icon element.
+   * @returns The icon element created.
    */
   createGameIcon() {
     const icon = document.createElement("div");
@@ -278,65 +277,82 @@ export default class UIManager {
     const menuButton = this.createGameButton("Menu");
     const restartButton = this.createGameButton("Restart");
     const gameIcon = this.createGameIcon();
-    header.classList.add("game-header");
     menuButton.setAttribute("id", "menu-button");
     restartButton.setAttribute("id", "restart-button");
+    header.classList.add("game-header");
     header.append(menuButton, gameIcon, restartButton);
     gameWrapper.appendChild(header);
   }
 
   /**
-   * Create a single disc.
-   * @param {number | string} dataId - The desired data-id for the disc.
-   * @returns The disc created element.
+   * Fills a disc.
+   * @param {HTMLElement} disc - The disc to fill.
+   * @param {string} playerWithTurn - The player with the current game turn.
    */
-  createDisc(dataId) {
+  fillDisc(disc, playerWithTurn) {
+    disc.classList.add("filled", "filled-" + playerWithTurn);
+  }
+
+  /**
+   * Create a single disc.
+   * @param {number | string} dataId - The ID to use for the disc.
+   * @param {{ x: number, y: number }} position - An object with position Y and X for the discs. Must be integers.
+   * @returns The disc element created.
+   */
+  createDisc(dataId, position) {
     const disc = document.createElement("div");
     disc.setAttribute("class", "disc");
     disc.setAttribute("id", "disc");
     disc.setAttribute("data-id", dataId);
+    disc.setAttribute("position-x", position.x);
+    disc.setAttribute("position-y", position.y);
     return disc;
   }
 
   /**
-   * Create a column.
-   * @param dataId - The data-id to be assigned to the column.
-   * @returns The created column element.
+   * Create game discs.
+   * @param amount - The amount of discs to create.
+   * @returns All the discs created.
    */
-  createColumn(dataId) {
-    const column = document.createElement("div");
-    column.classList.add("column");
-    column.setAttribute("data-id", dataId);
-    for (let i = 1; i <= this.rows; i++) {
-      const disc = this.createDisc(i);
-      column.appendChild(disc);
+  createDiscs(amount) {
+    const allDiscs = document.createDocumentFragment();
+    const discPosition = { x: 1, y: 1 };
+
+    for (let i = 1; i <= amount; i++) {
+      const disc = this.createDisc(i, discPosition);
+      allDiscs.appendChild(disc);
+      discPosition.x++;
+
+      const onLastColumn = i % 7 === 0;
+      if (onLastColumn) {
+        discPosition.x = 1;
+        discPosition.y++;
+      }
     }
-    return column;
+    return allDiscs;
   }
 
   /**
-   * Create a list of columns.
-   * @param {number} amount - The desired amount of columns to create. Must be an integer.
-   * @returns The board that contains the columns.
+   * Create the game board.
+   * @returns The board containing the discs.
    */
-  createColumns(amount) {
+  createBoard() {
     const board = document.createElement("div");
     board.classList.add("board");
     board.setAttribute("id", "board");
-    for (let i = 1; i <= amount; i++) {
-      const column = this.createColumn(i);
-      board.appendChild(column);
-    }
+
+    const discAmount = this.rows * this.columns;
+    const discs = this.createDiscs(discAmount);
+    board.appendChild(discs);
     return board;
   }
 
   /**
-   * Displays all columns created on screen.
-   * @param {number} amount - The desired amount of columns to create. Must be an integer.
+   * Displays the board created on screen.
    */
-  renderColumns(amount) {
+  renderBoard() {
     const gameWrapper = document.getElementById("game");
-    const board = this.createColumns(amount);
+    const board = this.createBoard();
     gameWrapper.appendChild(board);
   }
 }
