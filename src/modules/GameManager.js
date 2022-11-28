@@ -13,6 +13,7 @@ export default class GameManager {
   timePerTurn = 30; // seconds
 
   constructor() {
+    this.gameOver = false;
     this.utils = new Utils();
   }
 
@@ -27,6 +28,9 @@ export default class GameManager {
 
     // Avoid stop if not necessary
     if (!someDiscFilled) return;
+
+    // Reset game over
+    this.gameOver = false;
 
     // Clear timers
     clearInterval(currentTurnTimer);
@@ -112,5 +116,24 @@ export default class GameManager {
 
     currentTurnTimer = this.updateTurnTimeEachSecond();
     currentTurnTimeout = this.changeTurnAfterTimeout();
+  }
+
+  /**
+   * Checks if the game is won or not, and set win if it's won.
+   * @param {HTMLElement} disc - The disc that will be used to check a four-in-row.
+   */
+  checkWin(disc) {
+    const fourInRow = this.utils.checkFourInRow(disc, this.playerWithTurn);
+    if (fourInRow) this.setWin();
+    return;
+  }
+
+  setWin() {
+    this.gameOver = true;
+    console.log("Player " + this.playerWithTurn + " wins!");
+
+    // Clear timers
+    clearInterval(currentTurnTimer);
+    clearTimeout(currentTurnTimeout);
   }
 }
