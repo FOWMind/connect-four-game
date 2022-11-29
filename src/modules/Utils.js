@@ -77,37 +77,37 @@ export default class Utils {
    * Checks if there are four-in-row in the game.
    * @param {HTMLElement} disc - The disc to check its sibling discs.
    * @param {string} playerWithTurn - The player with the current game turn.
-   * @returns If there are four-in-row or not.
+   * @returns The array of sibling if there are four-in-row, otherwise false.
    */
   checkFourInRow(disc, playerWithTurn) {
     currentPlayerWithTurn = playerWithTurn;
 
     // Top siblings
     const top = this.getFilledSibling("top", disc);
-    if (this.checkEnoughSibling(top)) return true;
+    if (this.checkEnoughSibling(top)) return top;
 
     const topLeft = this.getFilledSibling("topLeft", disc);
-    if (this.checkEnoughSibling(topLeft)) return true;
+    if (this.checkEnoughSibling(topLeft)) return topLeft;
 
     const topRight = this.getFilledSibling("topRight", disc);
-    if (this.checkEnoughSibling(topRight)) return true;
+    if (this.checkEnoughSibling(topRight)) return topRight;
 
     // Bottom siblings
     const bottom = this.getFilledSibling("bottom", disc);
-    if (this.checkEnoughSibling(bottom)) return true;
+    if (this.checkEnoughSibling(bottom)) return bottom;
 
     const bottomLeft = this.getFilledSibling("bottomLeft", disc);
-    if (this.checkEnoughSibling(bottomLeft)) return true;
+    if (this.checkEnoughSibling(bottomLeft)) return bottomLeft;
 
     const bottomRight = this.getFilledSibling("bottomRight", disc);
-    if (this.checkEnoughSibling(bottomRight)) return true;
+    if (this.checkEnoughSibling(bottomRight)) return bottomRight;
 
     // Left and Right siblings
     const left = this.getFilledSibling("left", disc);
-    if (this.checkEnoughSibling(left)) return true;
+    if (this.checkEnoughSibling(left)) return left;
 
     const right = this.getFilledSibling("right", disc);
-    if (this.checkEnoughSibling(right)) return true;
+    if (this.checkEnoughSibling(right)) return right;
 
     return false;
   }

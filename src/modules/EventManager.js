@@ -10,6 +10,7 @@ export default class EventManager {
     this.gameManager = new GameManager();
     this.audioManager = new AudioManager();
   }
+
   /**
    * Manage what happens with each event in the application.
    */
@@ -24,6 +25,14 @@ export default class EventManager {
       const menuButton = document.getElementById("menu-button");
       const restartButton = document.getElementById("restart-button");
       const isClickedDisc = target.id === "disc";
+      const isClickSound = target.classList.contains("click-sound");
+      const isStartSound = target.classList.contains("start-sound");
+
+      if (isClickSound) {
+        this.audioManager.playSound("click");
+      } else if (isStartSound) {
+        this.audioManager.playSound("start");
+      }
 
       if (target === playCPUButton) {
         return console.log("play vs cpu");
@@ -35,9 +44,25 @@ export default class EventManager {
       } else if (target === menuButton) {
         return this.uiManager.showMenu();
       } else if (target === restartButton) {
+        if (restartButton) {
+          this.gameManager.gameStarted = false;
+          restartButton.setAttribute("disabled", "");
+        }
         return this.gameManager.stopGame();
       } else if (isClickedDisc) {
+        if (restartButton) {
+          this.gameManager.gameStarted = true;
+          restartButton.removeAttribute("disabled");
+        }
         return this.handleDiscClick(target);
+      }
+    });
+
+    document.addEventListener("mouseover", ({ target }) => {
+      const isHoverSound = target.classList.contains("hover-sound");
+
+      if (isHoverSound) {
+        this.audioManager.playSound("hover");
       }
     });
   }
@@ -48,9 +73,6 @@ export default class EventManager {
    */
   handleDiscClick(clickedDisc) {
     if (this.gameManager.gameOver) return;
-    const discPositionY = Number(clickedDisc.getAttribute("position-y"));
-    const isOnFirstRow = discPositionY === 1;
-    if (!isOnFirstRow) return;
 
     const lastAvailableDisc = this.utils.handleLastAvailableDisc(clickedDisc);
     if (!lastAvailableDisc) return;
@@ -58,7 +80,7 @@ export default class EventManager {
     this.gameManager.checkWin(lastAvailableDisc);
     this.uiManager.moveArrow(clickedDisc);
     this.uiManager.fillDisc(lastAvailableDisc, this.gameManager.playerWithTurn);
-    this.audioManager.playSound("pop");
+    this.audioManager.playSound("drop");
     this.gameManager.handleTurnChange();
   }
 }

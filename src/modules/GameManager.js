@@ -1,3 +1,4 @@
+import AudioManager from "./AudioManager.js";
 import Utils from "./Utils.js";
 
 let currentTurnTimer;
@@ -11,10 +12,34 @@ export default class GameManager {
   initialTurn = this.players.one;
   playerWithTurn = this.initialTurn;
   timePerTurn = 30; // seconds
+  gameStarted = false;
 
   constructor() {
     this.gameOver = false;
     this.utils = new Utils();
+    this.audioManager = new AudioManager();
+  }
+
+  clearTimers() {
+    clearInterval(currentTurnTimer);
+    clearTimeout(currentTurnTimeout);
+  }
+
+  clearTurn() {
+    this.playerWithTurn = this.initialTurn;
+    this.updateTurnPlayer(this.playerWithTurn);
+    this.updateTurnTime(this.timePerTurn);
+  }
+
+  resetDiscs(discs) {
+    discs.forEach((disc) =>
+      disc.classList.remove(
+        "filled",
+        `filled-${this.players.one}`,
+        `filled-${this.players.two}`,
+        `four-in-row`
+      )
+    );
   }
 
   /**
@@ -29,26 +54,13 @@ export default class GameManager {
     // Avoid stop if not necessary
     if (!someDiscFilled) return;
 
-    // Reset game over
+    const arrow = document.getElementById("arrow");
+
+    arrow.classList.add("hidden");
     this.gameOver = false;
-
-    // Clear timers
-    clearInterval(currentTurnTimer);
-    clearTimeout(currentTurnTimeout);
-
-    // Clear turn
-    this.playerWithTurn = this.initialTurn;
-    this.updateTurnPlayer(this.playerWithTurn);
-    this.updateTurnTime(this.timePerTurn);
-
-    // Clear classes
-    discs.forEach((disc) =>
-      disc.classList.remove(
-        "filled",
-        `filled-${this.players.one}`,
-        `filled-${this.players.two}`
-      )
-    );
+    this.clearTimers();
+    this.clearTurn();
+    this.resetDiscs(discs);
   }
 
   /**
@@ -124,16 +136,19 @@ export default class GameManager {
    */
   checkWin(disc) {
     const fourInRow = this.utils.checkFourInRow(disc, this.playerWithTurn);
-    if (fourInRow) this.setWin();
+    if (fourInRow) {
+      const fourInRowDiscs = [disc, ...fourInRow];
+      fourInRowDiscs.forEach((disc) => disc.classList.add("four-in-row"));
+      this.setWin();
+    }
     return;
   }
 
   setWin() {
     this.gameOver = true;
     console.log("Player " + this.playerWithTurn + " wins!");
+    this.audioManager.playSound("win");
 
-    // Clear timers
-    clearInterval(currentTurnTimer);
-    clearTimeout(currentTurnTimeout);
+    console.log({ currentTurnTimer, currentTurnTimeout });
   }
 }
