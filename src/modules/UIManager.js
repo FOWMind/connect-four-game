@@ -25,13 +25,11 @@ export default class UIManager {
    * @returns The created arrow element.
    */
   createArrow() {
-    const board = document.getElementById("board");
-    const boardPosition = board.getBoundingClientRect();
     const arrow = new Image();
     arrow.setAttribute("src", "./src/images/arrow-down.svg");
     arrow.classList.add("arrow");
     arrow.setAttribute("id", "arrow");
-    arrow.style.top = Math.round(boardPosition.top) - this.discSize / 2 + "px";
+    arrow.classList.add("hidden");
     return arrow;
   }
 
@@ -49,25 +47,34 @@ export default class UIManager {
    * @param {HTMLElement} disc - A disc to take its position and assign it to the arrow.
    */
   moveArrow(disc) {
-    const discPosition = disc.getBoundingClientRect();
     const arrow = document.getElementById("arrow");
-    arrow.style.top = Math.round(discPosition.top);
-    arrow.style.left = Math.round(discPosition.left) + "px";
+    const board = document.getElementById("board");
+    const boardTop = board.offsetTop - arrow.clientHeight / 2 + "px";
+    const discLeft = disc.offsetLeft + "px";
+
+    arrow.style.top = boardTop;
+    arrow.style.left = discLeft;
+    arrow.classList.remove("hidden");
   }
 
   /**
    * Create a menu button.
    * @param {string} text - Text to use in the button.
+   * @param {string} sound - The sound name to be used for the button.
    * @returns The button element.
    */
-  createMenuButton(text) {
+  createMenuButton(text, sound) {
     if (!text) {
       throw new Error("a text must be provided for the button.");
     }
     const button = document.createElement("button");
-    button.classList.add("menu-button");
     const buttonText = document.createTextNode(text);
     button.appendChild(buttonText);
+    if (sound === "click") {
+      button.classList.add("menu-button", "click-sound", "hover-sound");
+    } else {
+      button.classList.add("menu-button", "start-sound", "hover-sound");
+    }
     return button;
   }
 
@@ -79,7 +86,7 @@ export default class UIManager {
     const wrapper = document.createElement("div");
     const playCPU = this.createMenuButton("Play vs CPU");
     const playPlayer = this.createMenuButton("Play vs Player");
-    const gameRules = this.createMenuButton("Game rules");
+    const gameRules = this.createMenuButton("Game rules", "click");
 
     wrapper.classList.add("menu-buttons");
     playCPU.classList.add("primary");
@@ -242,14 +249,17 @@ export default class UIManager {
    * @param {string} text - The text to use in the game button.
    * @returns The created button element.
    */
-  createGameButton(text) {
+  createGameButton(text, disabled) {
     if (!text) {
       throw new Error("text must be provided to create a game button.");
     }
     const button = document.createElement("button");
     const buttonText = document.createTextNode(text);
     button.appendChild(buttonText);
-    button.classList.add("button");
+    button.classList.add("button", "click-sound", "hover-sound");
+    if (disabled) {
+      button.setAttribute("disabled", "");
+    }
     return button;
   }
 
@@ -275,7 +285,7 @@ export default class UIManager {
     const gameWrapper = document.getElementById("game");
     const header = document.createElement("div");
     const menuButton = this.createGameButton("Menu");
-    const restartButton = this.createGameButton("Restart");
+    const restartButton = this.createGameButton("Restart", true);
     const gameIcon = this.createGameIcon();
     menuButton.setAttribute("id", "menu-button");
     restartButton.setAttribute("id", "restart-button");

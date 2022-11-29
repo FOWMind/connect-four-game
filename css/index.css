@@ -44,6 +44,13 @@ img {
   color: #fff;
   border-radius: 50px;
 }
+.button[disabled] {
+  opacity: 0.5;
+  cursor: default;
+}
+.button:not([disabled]):hover {
+  background-color: #3f1e97;
+}
 
 .menu-button {
   display: block;
@@ -57,7 +64,6 @@ img {
   border-radius: 15px;
   border: 3px solid #000000;
   box-shadow: 0 10px 0 0 #000000;
-  transition: transform 0.15s;
   position: relative;
 }
 .menu-button::before {
@@ -69,10 +75,10 @@ img {
   height: 20%;
 }
 .menu-button:hover {
-  transform: translateY(-5px);
+  transform: translateY(-6px);
 }
 .menu-button:hover::before {
-  bottom: -10px;
+  bottom: -12px;
 }
 .menu-button.primary {
   background-color: #fd6486;
@@ -182,7 +188,9 @@ img {
 .arrow {
   width: 50px;
   position: absolute;
-  transform: translateY(50%);
+}
+.arrow.hidden {
+  visibility: hidden;
 }
 
 .disc {
@@ -222,6 +230,18 @@ img {
 }
 .disc.filled-2::before {
   background-color: #ffce67;
+}
+.disc.four-in-row::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  z-index: 5;
+  transform: translate(-50%, -50%);
+  width: 60%;
+  height: 60%;
+  border: 8px solid #fff;
+  border-radius: 50%;
 }
 
 .turn-box {
