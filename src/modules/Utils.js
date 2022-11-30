@@ -1,3 +1,5 @@
+import GameManager from "./GameManager.js";
+
 const initialLastDiscPositionY = 6;
 let lastDiscPositionY = initialLastDiscPositionY;
 let currentPlayerWithTurn;
@@ -14,17 +16,30 @@ export default class Utils {
     return [...discs];
   }
 
+  someDiscFilled() {
+    const discs = this.getAllDiscs();
+    return discs.some((disc) => disc.classList.contains("filled"));
+  }
+
+  allDiscFilled() {
+    const discs = this.getAllDiscs();
+    const someDiscUnfilled = discs.some(
+      (disc) => !disc.classList.contains("filled")
+    );
+    return !someDiscUnfilled;
+  }
+
   /**
    * Checks if a disc is filled.
    * @param {HTMLElement} disc - The disc to check if it's filled.
-   * @param {boolean} checkForCurrentPlayer - Check or not if the passed disc is filled by current player.
+   * @param {boolean} playerWithTurn - Current player with turn to check if the a disc is filled by that player.
    * @returns Whether the disc is filled or not.
    */
-  isFilled(disc, checkForCurrentPlayer) {
+  isFilled(disc, playerWithTurn) {
     const filled = disc.classList.contains("filled");
-    if (!checkForCurrentPlayer) return filled;
+    if (!playerWithTurn) return filled;
     const filledByCurrentPlayer = disc.classList.contains(
-      "filled-" + currentPlayerWithTurn
+      "filled-" + playerWithTurn
     );
     return filled && filledByCurrentPlayer;
   }
@@ -155,7 +170,10 @@ export default class Utils {
       );
       if (!sibling) continue;
 
-      const filledByCurrentPlayer = this.isFilled(sibling, true);
+      const filledByCurrentPlayer = this.isFilled(
+        sibling,
+        currentPlayerWithTurn
+      );
       if (!filledByCurrentPlayer) continue;
       allSibling.push(sibling);
     }

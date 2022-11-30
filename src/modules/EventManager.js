@@ -6,9 +6,10 @@ import Utils from "./Utils.js";
 export default class EventManager {
   constructor() {
     this.uiManager = new UIManager();
-    this.utils = new Utils();
-    this.gameManager = new GameManager();
     this.audioManager = new AudioManager();
+    this.gameManager = GameManager.instance();
+    this.utils = new Utils();
+    console.log("EventManager instanciado");
   }
 
   /**

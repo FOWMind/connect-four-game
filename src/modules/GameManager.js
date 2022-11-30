@@ -1,10 +1,9 @@
 import AudioManager from "./AudioManager.js";
 import Utils from "./Utils.js";
 
-let currentTurnTimer;
-let currentTurnTimeout;
-
 export default class GameManager {
+  currentTurnTimer;
+  currentTurnTimeout;
   players = {
     one: "1",
     two: "2",
@@ -14,6 +13,18 @@ export default class GameManager {
   timePerTurn = 30; // seconds
   gameStarted = false;
 
+  static newInstance = new GameManager();
+
+  /**
+   * Singleton
+   */
+  static instance() {
+    if (!GameManager.newInstance) {
+      GameManager.newInstance = new GameManager();
+    }
+    return this.newInstance;
+  }
+
   constructor() {
     this.gameOver = false;
     this.utils = new Utils();
@@ -21,8 +32,8 @@ export default class GameManager {
   }
 
   clearTimers() {
-    clearInterval(currentTurnTimer);
-    clearTimeout(currentTurnTimeout);
+    clearInterval(this.currentTurnTimer);
+    clearTimeout(this.currentTurnTimeout);
   }
 
   clearTurn() {
@@ -31,7 +42,8 @@ export default class GameManager {
     this.updateTurnTime(this.timePerTurn);
   }
 
-  resetDiscs(discs) {
+  resetDiscs() {
+    const discs = this.utils.getAllDiscs();
     discs.forEach((disc) =>
       disc.classList.remove(
         "filled",
@@ -46,10 +58,7 @@ export default class GameManager {
    * Stop the current game session.
    */
   stopGame() {
-    const discs = this.utils.getAllDiscs();
-    const someDiscFilled = discs.some((disc) => {
-      return disc.classList.contains("filled");
-    });
+    const someDiscFilled = this.utils.someDiscFilled();
 
     // Avoid stop if not necessary
     if (!someDiscFilled) return;
@@ -60,7 +69,7 @@ export default class GameManager {
     this.gameOver = false;
     this.clearTimers();
     this.clearTurn();
-    this.resetDiscs(discs);
+    this.resetDiscs();
   }
 
   /**
@@ -95,39 +104,39 @@ export default class GameManager {
 
   /**
    * Updates turn time every second and shows it on screen.
-   * @returns The turn interval identifier.
    */
   updateTurnTimeEachSecond() {
     let timeLeft = this.timePerTurn;
-    const timer = setInterval(() => {
+    this.currentTurnTimer = setInterval(() => {
       // each second
       timeLeft--;
       this.updateTurnTime(timeLeft);
     }, 1000);
-    return timer;
   }
 
   /**
    * Changes the current turn to opponent when turn time ends.
-   * @returns The turn timeout identifier.
    */
   changeTurnAfterTimeout() {
-    const timeout = setTimeout(() => {
+    this.currentTurnTimeout = setTimeout(() => {
       this.handleTurnChange();
     }, this.timePerTurn * 1000);
-    return timeout;
   }
 
   /**
    * Handles what happen with the game turns.
    */
   handleTurnChange() {
+    if (this.gameOver) return;
+    if (this.utils.allDiscFilled()) {
+      // TODO: Do something elaborate
+      this.stopGame();
+      return;
+    }
     this.changeTurnToOpponent();
-    clearInterval(currentTurnTimer);
-    clearTimeout(currentTurnTimeout);
-
-    currentTurnTimer = this.updateTurnTimeEachSecond();
-    currentTurnTimeout = this.changeTurnAfterTimeout();
+    this.clearTimers();
+    this.updateTurnTimeEachSecond();
+    this.changeTurnAfterTimeout();
   }
 
   /**
@@ -146,9 +155,8 @@ export default class GameManager {
 
   setWin() {
     this.gameOver = true;
-    console.log("Player " + this.playerWithTurn + " wins!");
+    this.clearTimers();
     this.audioManager.playSound("win");
-
-    console.log({ currentTurnTimer, currentTurnTimeout });
+    console.log("Player " + this.playerWithTurn + " wins!");
   }
 }

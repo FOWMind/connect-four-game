@@ -6,7 +6,8 @@ export default class UIManager {
     this.rows = 6;
     this.discSize = 50; // pixels
     this.root = document.getElementById("root");
-    this.gameManager = new GameManager();
+    this.gameManager = GameManager.instance();
+    console.log("UIManager instanciado");
   }
   /**
    * Handles the game render.
