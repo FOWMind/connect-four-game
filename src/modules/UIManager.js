@@ -1,6 +1,8 @@
 import GameManager from "./GameManager.js";
 import Utils from "./Utils.js";
 
+const root = document.getElementById("root");
+
 export default class UIManager {
   static instance;
 
@@ -15,7 +17,6 @@ export default class UIManager {
     this.columns = 7;
     this.rows = 6;
     this.discSize = 50; // pixels
-    this.root = document.getElementById("root");
     this.utils = Utils.getInstance();
   }
 
@@ -28,7 +29,9 @@ export default class UIManager {
     this.renderPlayers();
     this.renderBoard();
     this.renderArrow();
-    this.renderTurnBox();
+    this.renderGameBox();
+    this.showTurnBox();
+    this.resetTurn();
   }
 
   /**
@@ -122,12 +125,11 @@ export default class UIManager {
 
   /**
    * Displays the game layout on screen and hide the menu.
-   * @param {string} mode - Game mode for the renderGame
    */
-  showGame(mode) {
+  showGame() {
     const menu = document.getElementById("menu");
     menu.remove();
-    this.renderGame(mode);
+    this.renderGame();
   }
 
   /**
@@ -139,16 +141,88 @@ export default class UIManager {
     menuWrapper.setAttribute("id", "menu");
     menuWrapper.classList.add("menu");
     menuWrapper.appendChild(menuButtons);
-    this.root.appendChild(menuWrapper);
+    root.appendChild(menuWrapper);
   }
 
   /**
-   * Render a game wrapper in DOM for the game elements.
+   * Renders a game wrapper in the DOM for the game elements.
    */
   renderGameWrapper() {
     const wrapper = document.createElement("div");
     wrapper.setAttribute("id", "game");
-    this.root.appendChild(wrapper);
+    root.appendChild(wrapper);
+  }
+
+  /**
+   * Creates the text for the win or tie box.
+   * @returns The text wrapper element.
+   */
+  createWinOrTieBoxText(winOrTie) {
+    const wrapper = document.createElement("div");
+
+    // Player text
+    const player = document.createElement("span");
+    const playerWinner = GameManager.getInstance().playerWithTurn;
+    const playerText = document.createTextNode(`Player ${playerWinner}`);
+    player.classList.add("win-or-tie-box-player");
+    player.appendChild(playerText);
+
+    // Win or tie text
+    const winOrTieContainer = document.createElement("p");
+    const winOrTieText = document.createTextNode(
+      winOrTie === "win" ? "Wins" : "Tie"
+    );
+    winOrTieContainer.classList.add("win-or-tie-box-state");
+    winOrTieContainer.appendChild(winOrTieText);
+
+    // Play again button
+    const playAgain = this.createGameButton("Play again");
+    playAgain.setAttribute("id", "play-again-button");
+
+    wrapper.setAttribute("id", "win-or-tie-box-text");
+    wrapper.append(player, winOrTieContainer, playAgain);
+    return wrapper;
+  }
+
+  /**
+   * Displays the tie box on screen.
+   */
+  showTieBox() {
+    this.showWinOrTieBox("tie");
+  }
+
+  /**
+   * Displays the win box on screen.
+   */
+  showWinBox() {
+    this.showWinOrTieBox("win");
+  }
+
+  /**
+   * Change the content of the game box. Removes existing boxes first.
+   * @param {string} winOrTie - The type of state to display in game box.
+   */
+  showWinOrTieBox(winOrTie) {
+    const turnBoxText = document.getElementById("turn-box-text");
+    if (turnBoxText) turnBoxText.remove();
+
+    const winOrTieBoxText = document.getElementById("win-or-tie-box-text");
+    if (winOrTieBoxText) winOrTieBoxText.remove();
+
+    const gameBox = document.getElementById("game-box");
+    gameBox.classList.remove("turn-box", "win-box", "tie-box");
+
+    if (winOrTie === "win") {
+      const winBoxText = this.createWinOrTieBoxText("win");
+      gameBox.classList.add("win-box");
+      gameBox.appendChild(winBoxText);
+      return;
+    } else if (winOrTie === "tie") {
+      const tieBoxText = this.createWinOrTieBoxText("tie");
+      gameBox.classList.add("tie-box");
+      gameBox.appendChild(tieBoxText);
+      return;
+    }
   }
 
   /**
@@ -156,7 +230,7 @@ export default class UIManager {
    * @returns The created wrapper element with the turn box text.
    */
   createTurnBoxText() {
-    const wrapper = document.createDocumentFragment();
+    const wrapper = document.createElement("div");
 
     // Player text
     const player = document.createElement("p");
@@ -168,40 +242,47 @@ export default class UIManager {
     turnTimeContainer.setAttribute("id", "turn-box-time");
     turnTimeContainer.classList.add("turn-box-time");
 
+    wrapper.setAttribute("id", "turn-box-text");
     wrapper.append(player, turnTimeContainer);
     return wrapper;
   }
 
   /**
-   * Create a turn box with its text.
-   * @returns The created turn box element.
+   * Converts the game box to a turn box
    */
-  createTurnBox() {
+  showTurnBox() {
+    const winOrTieBoxText = document.getElementById("win-or-tie-box-text");
+    if (winOrTieBoxText) winOrTieBoxText.remove();
+
+    const turnBoxText = this.createTurnBoxText();
+    const gameBox = document.getElementById("game-box");
+    gameBox.classList.remove("win-box", "tie-box");
+    gameBox.classList.add("turn-box");
+    gameBox.appendChild(turnBoxText);
+  }
+
+  /**
+   * Displays the game box on screen.
+   */
+  renderGameBox() {
+    const gameBox = this.createGameBox();
+    const gameWrapper = document.getElementById("game");
+    gameWrapper.appendChild(gameBox);
+  }
+
+  /**
+   * Create a game box (to use with turn box, win box, etc).
+   * @returns The created game box element.
+   */
+  createGameBox() {
     const box = document.createElement("div");
-    box.setAttribute("id", "turn-box");
-    box.classList.add("turn-box");
-
-    const background = new Image();
-    background.setAttribute("src", "./src/images/turn-box.svg");
-    background.classList.add("turn-box-background");
-
-    const text = this.createTurnBoxText();
-    box.append(background, text);
+    box.setAttribute("id", "game-box");
+    box.classList.add("game-box");
     return box;
   }
 
   /**
-   * Displays the turn box on screen.
-   */
-  renderTurnBox() {
-    const turnBox = this.createTurnBox();
-    const gameWrapper = document.getElementById("game");
-    gameWrapper.appendChild(turnBox);
-    this.resetTurn();
-  }
-
-  /**
-   * Reset the current player turn and time in UI
+   * Reset the current player turn and time on screen
    */
   resetTurn() {
     this.updateTurnPlayer(GameManager.getInstance().playerWithTurn);
@@ -214,6 +295,11 @@ export default class UIManager {
    */
   updateTurnPlayer(player) {
     const turnPlayer = document.getElementById("turn-box-player");
+    if (!turnPlayer) {
+      this.showTurnBox();
+      this.updateTurnPlayer(player);
+      return;
+    }
     turnPlayer.innerHTML = `Player ${player}'s turn`;
   }
 
@@ -223,6 +309,11 @@ export default class UIManager {
    */
   updateTurnTime(time) {
     const turnTime = document.getElementById("turn-box-time");
+    if (!turnTime) {
+      this.showTurnBox();
+      this.updateTurnTime(time);
+      return;
+    }
     turnTime.innerText = time + "s";
   }
 

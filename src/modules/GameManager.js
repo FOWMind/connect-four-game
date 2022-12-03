@@ -59,6 +59,7 @@ export default class GameManager {
     const arrow = document.getElementById("arrow");
 
     arrow.classList.add("hidden");
+    this.gameStarted = false;
     this.gameOver = false;
     this.resetTurn();
     this.uiManager.resetDiscs();
@@ -102,12 +103,12 @@ export default class GameManager {
   handleTurnChange() {
     if (this.gameOver) return;
     if (this.utils.allDiscFilled()) {
-      // TODO: Do something elaborate
-      this.stopGame();
+      this.setTie();
       return;
     }
-    this.changeTurnToOpponent();
+
     this.clearTimers();
+    this.changeTurnToOpponent();
     this.updateTurnTimeEachSecond();
     this.changeTurnAfterTimeout();
   }
@@ -126,10 +127,29 @@ export default class GameManager {
     return;
   }
 
-  setWin() {
+  /**
+   * Sets the game over to true and clear the timers
+   */
+  setGameOver() {
     this.gameOver = true;
     this.clearTimers();
+  }
+
+  /**
+   * Sets the game state to tie.
+   */
+  setTie() {
+    this.setGameOver();
+    this.uiManager.showTieBox();
     this.audioManager.playSound("win");
-    console.log("Player " + this.playerWithTurn + " wins!");
+  }
+
+  /**
+   * Sets the game state to win.
+   */
+  setWin() {
+    this.setGameOver();
+    this.audioManager.playSound("win");
+    this.uiManager.showWinBox();
   }
 }

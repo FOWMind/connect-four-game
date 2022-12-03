@@ -60,7 +60,7 @@ img {
 
 #root {
   max-width: 700px;
-  margin: 0 auto;
+  margin: 2rem auto;
   display: grid;
   place-content: center;
 }
@@ -141,7 +141,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem 0;
+  margin-bottom: 2rem;
 }
 
 .game-icon {
@@ -319,40 +319,56 @@ img {
   }
 }
 
-.turn-box {
-  padding: 2rem;
-  padding-bottom: 0;
-  max-width: 15rem;
-  max-width: max-content;
+.game-box {
+  padding: 1rem 2rem;
   margin: 0 auto;
+  margin-top: -1rem;
   color: $secondaryText;
   text-align: center;
+  border-radius: 15px;
+  border: 3px solid $secondaryBg;
+  box-shadow: 0 10px 0 0 $secondaryBg;
   position: relative;
+  z-index: 5;
 
-  &-background {
-    position: absolute;
-    top: -1rem;
-    left: 50%;
-    z-index: 1;
-    transform: translateX(-50%);
-    width: 15rem - 2rem;
-    pointer-events: none;
-    user-select: none;
+  &.turn-box {
+    background-color: $discSelectedBgPlayerOne;
+    max-width: 14rem;
+
+    .turn-box-player,
+    .turn-box-time {
+      color: $secondaryText;
+      font-weight: $fwMedium;
+    }
+
+    .turn-box-player {
+      font-size: 1.25rem;
+    }
+
+    .turn-box-time {
+      font-size: 4rem;
+    }
   }
 
-  &-player,
-  &-time {
-    position: relative;
-    z-index: 5;
-  }
+  &.win-box,
+  &.tie-box {
+    background-color: $primaryBg;
+    max-width: 16rem;
+    max-width: max-content;
 
-  &-player {
-    font-size: 1.25rem;
-    font-weight: $fwMedium;
-  }
+    .win-or-tie-box-player,
+    .win-or-tie-box-state {
+      color: $primaryText;
+      font-weight: $fwMedium;
+    }
 
-  &-time {
-    font-size: 4rem;
-    font-weight: $fwMedium;
+    .win-or-tie-box-player {
+      font-size: 1.25rem;
+    }
+
+    .win-or-tie-box-state {
+      font-size: 4rem;
+      word-break: break-all;
+    }
   }
 }

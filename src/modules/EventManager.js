@@ -35,6 +35,7 @@ export default class EventManager {
       // Game
       const menuButton = document.getElementById("menu-button");
       const restartButton = document.getElementById("restart-button");
+      const playAgainButton = document.getElementById("play-again-button");
       const isClickedDisc = target.id === "disc";
       const isClickSound = target.classList.contains("click-sound");
       const isStartSound = target.classList.contains("start-sound");
@@ -54,18 +55,12 @@ export default class EventManager {
         return console.log("opening game rules");
       } else if (target === menuButton) {
         return this.uiManager.showMenu();
-      } else if (target === restartButton) {
-        if (restartButton) {
-          this.gameManager.gameStarted = false;
-          restartButton.setAttribute("disabled", "");
-        }
+      } else if (target === restartButton || target === playAgainButton) {
+        if (restartButton) restartButton.setAttribute("disabled", "");
         return this.gameManager.stopGame();
       } else if (isClickedDisc) {
         clickedDisc = target;
-        if (restartButton) {
-          this.gameManager.gameStarted = true;
-          restartButton.removeAttribute("disabled");
-        }
+        if (restartButton) restartButton.removeAttribute("disabled");
         return this.handleDiscClick(target);
       }
     });
@@ -90,6 +85,7 @@ export default class EventManager {
    */
   handleDiscClick(clickedDisc) {
     if (this.gameManager.gameOver) return;
+    this.gameManager.gameStarted = true;
 
     const lastAvailableDisc = this.utils.handleLastAvailableDisc(clickedDisc);
     if (!lastAvailableDisc) return;
