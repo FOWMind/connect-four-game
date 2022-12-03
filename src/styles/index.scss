@@ -84,10 +84,10 @@ img {
 
   &[disabled] {
     opacity: 0.5;
-    cursor: default;
+    pointer-events: none;
   }
 
-  &:not([disabled]):hover {
+  &:hover {
     background-color: $buttonBgHover;
   }
 }
@@ -130,6 +130,11 @@ img {
 
   &.secondary {
     background-color: $playerTwoClr;
+  }
+
+  &[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
   }
 }
 

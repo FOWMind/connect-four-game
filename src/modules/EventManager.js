@@ -47,7 +47,8 @@ export default class EventManager {
       }
 
       if (target === playCPUButton) {
-        return console.log("play vs cpu");
+        // return console.log("play vs cpu");
+        return;
       } else if (target === playPlayerButton) {
         console.log("play vs player");
         return this.uiManager.showGame("player");

@@ -46,9 +46,9 @@ img {
 }
 .button[disabled] {
   opacity: 0.5;
-  cursor: default;
+  pointer-events: none;
 }
-.button:not([disabled]):hover {
+.button:hover {
   background-color: #3f1e97;
 }
 
@@ -86,6 +86,10 @@ img {
 }
 .menu-button.secondary {
   background-color: #ffce67;
+}
+.menu-button[disabled] {
+  opacity: 0.5;
+  pointer-events: none;
 }
 
 .menu {

@@ -104,6 +104,7 @@ export default class UIManager {
 
     wrapper.classList.add("menu-buttons");
     playCPU.classList.add("primary");
+    playCPU.setAttribute("disabled", "");
     playCPU.setAttribute("id", "play-vs-cpu-button");
     playPlayer.classList.add("secondary");
     playPlayer.setAttribute("id", "play-vs-player-button");
