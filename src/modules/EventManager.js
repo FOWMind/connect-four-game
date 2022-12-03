@@ -9,13 +9,14 @@ export default class EventManager {
     this.audioManager = new AudioManager();
     this.gameManager = GameManager.instance();
     this.utils = new Utils();
-    console.log("EventManager instanciado");
   }
 
   /**
    * Manage what happens with each event in the application.
    */
   handleEvents() {
+    let clickedDisc;
+
     document.addEventListener("click", ({ target }) => {
       // Menu
       const playCPUButton = document.getElementById("play-vs-cpu-button");
@@ -51,6 +52,7 @@ export default class EventManager {
         }
         return this.gameManager.stopGame();
       } else if (isClickedDisc) {
+        clickedDisc = target;
         if (restartButton) {
           this.gameManager.gameStarted = true;
           restartButton.removeAttribute("disabled");
@@ -65,6 +67,11 @@ export default class EventManager {
       if (isHoverSound) {
         this.audioManager.playSound("hover");
       }
+    });
+
+    window.addEventListener("resize", () => {
+      if (!clickedDisc) return;
+      this.uiManager.moveArrow(clickedDisc);
     });
   }
 
