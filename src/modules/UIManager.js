@@ -1,13 +1,24 @@
 import GameManager from "./GameManager.js";
+import Utils from "./Utils.js";
 
 export default class UIManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new UIManager();
+    }
+    return this.instance;
+  }
+
   constructor() {
     this.columns = 7;
     this.rows = 6;
     this.discSize = 50; // pixels
     this.root = document.getElementById("root");
-    this.gameManager = GameManager.instance();
+    this.utils = Utils.getInstance();
   }
+
   /**
    * Handles the game render.
    */
@@ -103,7 +114,7 @@ export default class UIManager {
    * Displays the menu on screen and hide the game.
    */
   showMenu() {
-    this.gameManager.stopGame();
+    GameManager.getInstance().stopGame();
     const gameWrapper = document.getElementById("game");
     gameWrapper.remove();
     this.renderMenu();
@@ -186,8 +197,33 @@ export default class UIManager {
     const turnBox = this.createTurnBox();
     const gameWrapper = document.getElementById("game");
     gameWrapper.appendChild(turnBox);
-    this.gameManager.updateTurnPlayer(this.gameManager.playerWithTurn);
-    this.gameManager.updateTurnTime(this.gameManager.timePerTurn);
+    this.resetTurn();
+  }
+
+  /**
+   * Reset the current player turn and time in UI
+   */
+  resetTurn() {
+    this.updateTurnPlayer(GameManager.getInstance().playerWithTurn);
+    this.updateTurnTime(GameManager.getInstance().timePerTurn);
+  }
+
+  /**
+   * Updates the player text in the turn box.
+   * @param {string} player - The turn player's name to update.
+   */
+  updateTurnPlayer(player) {
+    const turnPlayer = document.getElementById("turn-box-player");
+    turnPlayer.innerHTML = `Player ${player}'s turn`;
+  }
+
+  /**
+   * Updates the time in the turn box.
+   * @param {number} time - The turn time to update.
+   */
+  updateTurnTime(time) {
+    const turnTime = document.getElementById("turn-box-time");
+    turnTime.innerText = time + "s";
   }
 
   /**
@@ -292,6 +328,21 @@ export default class UIManager {
     header.classList.add("game-header");
     header.append(menuButton, gameIcon, restartButton);
     gameWrapper.appendChild(header);
+  }
+
+  /**
+   * Reset all discs UI state
+   */
+  resetDiscs() {
+    const discs = this.utils.getAllDiscs();
+    discs.forEach((disc) =>
+      disc.classList.remove(
+        "filled",
+        `filled-${GameManager.getInstance().players.one}`,
+        `filled-${GameManager.getInstance().players.two}`,
+        `four-in-row`
+      )
+    );
   }
 
   /**

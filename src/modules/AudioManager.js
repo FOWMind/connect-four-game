@@ -1,4 +1,13 @@
 export default class AudioManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new AudioManager();
+    }
+    return this.instance;
+  }
+
   soundPath = "./src/sounds/";
   sounds = {
     drop: this.soundPath + "drop.mp3",

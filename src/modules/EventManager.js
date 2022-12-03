@@ -4,11 +4,20 @@ import UIManager from "./UIManager.js";
 import Utils from "./Utils.js";
 
 export default class EventManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new EventManager();
+    }
+    return this.instance;
+  }
+
   constructor() {
-    this.uiManager = new UIManager();
-    this.audioManager = new AudioManager();
-    this.gameManager = GameManager.instance();
-    this.utils = new Utils();
+    this.uiManager = UIManager.getInstance();
+    this.audioManager = AudioManager.getInstance();
+    this.gameManager = GameManager.getInstance();
+    this.utils = Utils.getInstance();
   }
 
   /**

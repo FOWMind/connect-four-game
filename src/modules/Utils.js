@@ -1,10 +1,17 @@
-import GameManager from "./GameManager.js";
-
 const initialLastDiscPositionY = 6;
 let lastDiscPositionY = initialLastDiscPositionY;
 let currentPlayerWithTurn;
 
 export default class Utils {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new Utils();
+    }
+    return this.instance;
+  }
+
   siblingsNeededToWin = 3;
 
   /**

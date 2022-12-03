@@ -1,7 +1,17 @@
 import AudioManager from "./AudioManager.js";
+import UIManager from "./UIManager.js";
 import Utils from "./Utils.js";
 
 export default class GameManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new GameManager();
+    }
+    return this.instance;
+  }
+
   currentTurnTimer;
   currentTurnTimeout;
   players = {
@@ -13,45 +23,28 @@ export default class GameManager {
   timePerTurn = 30; // seconds
   gameStarted = false;
 
-  static newInstance = new GameManager();
-
-  /**
-   * Singleton
-   */
-  static instance() {
-    if (!GameManager.newInstance) {
-      GameManager.newInstance = new GameManager();
-    }
-    return this.newInstance;
-  }
-
   constructor() {
     this.gameOver = false;
-    this.utils = new Utils();
-    this.audioManager = new AudioManager();
+    this.utils = Utils.getInstance();
+    this.audioManager = AudioManager.getInstance();
+    this.uiManager = UIManager.getInstance();
   }
 
+  /**
+   * Clear interval and timeout variables
+   */
   clearTimers() {
     clearInterval(this.currentTurnTimer);
     clearTimeout(this.currentTurnTimeout);
   }
 
-  clearTurn() {
+  /**
+   * Reset the current turn state including time
+   */
+  resetTurn() {
     this.playerWithTurn = this.initialTurn;
-    this.updateTurnPlayer(this.playerWithTurn);
-    this.updateTurnTime(this.timePerTurn);
-  }
-
-  resetDiscs() {
-    const discs = this.utils.getAllDiscs();
-    discs.forEach((disc) =>
-      disc.classList.remove(
-        "filled",
-        `filled-${this.players.one}`,
-        `filled-${this.players.two}`,
-        `four-in-row`
-      )
-    );
+    this.clearTimers();
+    this.uiManager.resetTurn();
   }
 
   /**
@@ -67,27 +60,8 @@ export default class GameManager {
 
     arrow.classList.add("hidden");
     this.gameOver = false;
-    this.clearTimers();
-    this.clearTurn();
-    this.resetDiscs();
-  }
-
-  /**
-   * Updates the player text in the turn box.
-   * @param {string} player - The turn player's name to update.
-   */
-  updateTurnPlayer(player) {
-    const turnPlayer = document.getElementById("turn-box-player");
-    turnPlayer.innerHTML = `Player ${player}'s turn`;
-  }
-
-  /**
-   * Updates the time in the turn box.
-   * @param {number} time - The turn time to update.
-   */
-  updateTurnTime(time) {
-    const turnTime = document.getElementById("turn-box-time");
-    turnTime.innerText = time + "s";
+    this.resetTurn();
+    this.uiManager.resetDiscs();
   }
 
   /**
@@ -98,8 +72,7 @@ export default class GameManager {
       this.playerWithTurn === this.players.one
         ? this.players.two
         : this.players.one;
-    this.updateTurnPlayer(this.playerWithTurn);
-    this.updateTurnTime(this.timePerTurn);
+    this.uiManager.resetTurn();
   }
 
   /**
@@ -110,7 +83,7 @@ export default class GameManager {
     this.currentTurnTimer = setInterval(() => {
       // each second
       timeLeft--;
-      this.updateTurnTime(timeLeft);
+      this.uiManager.updateTurnTime(timeLeft);
     }, 1000);
   }
 
