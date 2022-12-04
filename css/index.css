@@ -91,6 +91,16 @@ img {
   opacity: 0.5;
   pointer-events: none;
 }
+.menu-button.has-icon {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0.5rem 1rem;
+}
+.menu-button-icon {
+  height: 50px;
+  margin-left: 1rem;
+}
 
 .menu {
   padding: 2rem 0;
@@ -127,10 +137,10 @@ img {
   flex-wrap: wrap;
 }
 .players-wrapper .player:first-of-type .player-avatar {
-  left: -25px;
+  left: -27.5px;
 }
 .players-wrapper .player:last-of-type .player-avatar {
-  right: -25px;
+  right: -27.5px;
 }
 
 .player {
@@ -147,8 +157,8 @@ img {
   top: 50%;
   transform: translateY(-50%);
   z-index: 5;
-  width: 50px;
-  height: 50px;
+  width: 55px;
+  height: 55px;
 }
 .player-avatar::before {
   content: "";
@@ -174,7 +184,12 @@ img {
   text-transform: uppercase;
   font-weight: 600;
   font-size: 1.25rem;
-  margin: 0 0.5rem;
+}
+.player-name:first-of-type {
+  margin-left: 27.5px;
+}
+.player-name:last-of-type {
+  margin-right: 27.5px;
 }
 
 .board {

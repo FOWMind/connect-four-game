@@ -4,6 +4,7 @@ $columnsAmount: 7;
 $discSize: 50px;
 $discMargin: 10px;
 $discWrapperPadding: $discMargin;
+$playerSize: $discSize * 1.1;
 
 // Text
 $fwMedium: 600;
@@ -136,6 +137,18 @@ img {
     opacity: 0.5;
     pointer-events: none;
   }
+
+  &.has-icon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+
+  &-icon {
+    height: $discSize;
+    margin-left: 1rem;
+  }
 }
 
 .menu {
@@ -178,13 +191,13 @@ img {
   .player {
     &:first-of-type {
       .player-avatar {
-        left: -25px;
+        left: -($playerSize / 2);
       }
     }
 
     &:last-of-type {
       .player-avatar {
-        right: -25px;
+        right: -($playerSize / 2);
       }
     }
   }
@@ -204,8 +217,8 @@ img {
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
-    width: 50px;
-    height: 50px;
+    width: $playerSize;
+    height: $playerSize;
 
     &::before {
       content: "";
@@ -234,7 +247,14 @@ img {
     text-transform: uppercase;
     font-weight: $fwMedium;
     font-size: 1.25rem;
-    margin: 0 0.5rem;
+
+    &:first-of-type {
+      margin-left: #{$playerSize / 2};
+    }
+
+    &:last-of-type {
+      margin-right: #{$playerSize / 2};
+    }
   }
 }
 

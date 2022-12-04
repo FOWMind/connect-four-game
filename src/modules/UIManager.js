@@ -17,6 +17,7 @@ export default class UIManager {
     this.columns = 7;
     this.rows = 6;
     this.discSize = 50; // pixels
+    this.arrowMargin = 5; // pixels
     this.utils = Utils.getInstance();
   }
 
@@ -40,7 +41,7 @@ export default class UIManager {
    */
   createArrow() {
     const arrow = new Image();
-    arrow.setAttribute("src", "./src/images/arrow-down.svg");
+    arrow.setAttribute("src", "./src/images/arrow.svg");
     arrow.classList.add("arrow");
     arrow.setAttribute("id", "arrow");
     arrow.classList.add("hidden");
@@ -63,7 +64,8 @@ export default class UIManager {
   moveArrow(disc) {
     const arrow = document.getElementById("arrow");
     const board = document.getElementById("board");
-    const boardTop = board.offsetTop - arrow.clientHeight / 2 + "px";
+    const boardTop =
+      board.offsetTop - arrow.clientHeight / 2 - this.arrowMargin + "px";
     const discLeft = disc.offsetLeft + "px";
 
     arrow.style.top = boardTop;
@@ -75,20 +77,30 @@ export default class UIManager {
    * Create a menu button.
    * @param {string} text - Text to use in the button.
    * @param {string} sound - The sound name to be used for the button.
+   * @param {string} icon - The icon image path to use in the button.
    * @returns The button element.
    */
-  createMenuButton(text, sound) {
+  createMenuButton(text, sound, icon) {
     if (!text) {
       throw new Error("a text must be provided for the button.");
     }
     const button = document.createElement("button");
     const buttonText = document.createTextNode(text);
+    button.classList.add(
+      "menu-button",
+      sound === "click" ? "click-sound" : "start-sound",
+      "hover-sound"
+    );
     button.appendChild(buttonText);
-    if (sound === "click") {
-      button.classList.add("menu-button", "click-sound", "hover-sound");
-    } else {
-      button.classList.add("menu-button", "start-sound", "hover-sound");
+
+    if (icon) {
+      const buttonIcon = new Image();
+      buttonIcon.setAttribute("src", icon);
+      buttonIcon.classList.add("menu-button-icon");
+      button.appendChild(buttonIcon);
+      button.classList.add("has-icon");
     }
+
     return button;
   }
 
@@ -98,8 +110,16 @@ export default class UIManager {
    */
   createMenuButtons() {
     const wrapper = document.createElement("div");
-    const playCPU = this.createMenuButton("Play vs CPU");
-    const playPlayer = this.createMenuButton("Play vs Player");
+    const playCPU = this.createMenuButton(
+      "Play vs CPU",
+      null,
+      "./src/images/play-vs-cpu.svg"
+    );
+    const playPlayer = this.createMenuButton(
+      "Play vs Player",
+      null,
+      "./src/images/play-vs-player.svg"
+    );
     const gameRules = this.createMenuButton("Game rules", "click");
 
     wrapper.classList.add("menu-buttons");
@@ -366,7 +386,7 @@ export default class UIManager {
     );
     const playerTwo = this.createPlayer(
       "Player 2",
-      "./src/images/player-2-reversed.svg"
+      "./src/images/player-2.svg"
     );
     playersWrapper.append(playerOne, playerTwo);
     gameWrapper.appendChild(playersWrapper);
