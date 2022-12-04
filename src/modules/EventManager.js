@@ -59,6 +59,7 @@ export default class EventManager {
       } else if (target === gameRulesButton) {
         this.uiManager.showRules();
       } else if (target === menuButton) {
+        clickedDisc = null;
         this.uiManager.showMenu();
       } else if (target === restartButton || target === playAgainButton) {
         if (restartButton) restartButton.setAttribute("disabled", "");
