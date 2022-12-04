@@ -1,0 +1,12 @@
+<svg width="200" height="110" viewBox="0 0 200 110" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect x="92.5" y="2.5" width="105" height="105" rx="52.5" fill="#FD6486"/>
+<rect x="124" y="40" width="15" height="6" fill="white"/>
+<rect x="151" y="40" width="15" height="6" fill="white"/>
+<rect x="115" y="59" width="62" height="6" fill="white"/>
+<rect x="92.5" y="2.5" width="105" height="105" rx="52.5" stroke="white" stroke-width="5"/>
+<rect x="2.5" y="2.5" width="105" height="105" rx="52.5" fill="#FD6486"/>
+<rect x="43" y="40" width="6" height="15" rx="3" fill="white"/>
+<rect x="61" y="40" width="6" height="15" rx="3" fill="white"/>
+<path d="M81.8405 60.5894C76.3873 67.0398 68.5978 73.1696 59.5991 74.6108C50.6235 76.0484 40.3802 72.8308 29.9763 60.4553C29.2037 59.5363 28.0202 59.3391 27.0421 59.6595C26.0621 59.9805 25.25 60.8351 25.25 62.0455C25.25 62.6129 25.4567 63.1771 25.8182 63.6124C38.3395 78.6901 50.9217 81.9477 61.6375 79.7648C72.3266 77.5874 81.0998 70.0084 86.0593 63.5215C86.3641 63.1229 86.5155 62.6434 86.5155 62.1483C86.5155 60.9765 85.6963 60.1512 84.7281 59.8382C83.7615 59.5257 82.5894 59.7036 81.8405 60.5894Z" fill="white" stroke="white" stroke-width="0.5"/>
+<rect x="2.5" y="2.5" width="105" height="105" rx="52.5" stroke="white" stroke-width="5"/>
+</svg>

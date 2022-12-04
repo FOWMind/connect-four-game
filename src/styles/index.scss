@@ -1,38 +1,76 @@
 @use "sass:color";
+@use "sass:math";
 
 $columnsAmount: 7;
 $discSize: 50px;
 $discMargin: 10px;
 $discWrapperPadding: $discMargin;
+$playerSize: $discSize * 1.1;
+$modalPopupAnimationTime: 0.5s;
+$modalHideAnimationTime: 0.35s;
+$modalCloseSize: 70px;
 
 // Text
 $fwMedium: 600;
 
 /* Colors */
+$purple: #7945ff;
+$red: #fd6486;
+$redDark: #7e3243;
+$yellow: #ffce67;
+$yellowDark: #7f6633;
+
 $primaryBg: #fff;
 $primaryText: #000;
+$primaryTextSoft: #7b7b7b;
 $secondaryBg: #000;
 $secondaryText: #fff;
-$bgClr: #7945ff;
+$tertiaryText: $purple;
+
+$bgClr: $purple;
+
 $buttonBg: #5b2cd5;
 $buttonBgHover: #3f1e97;
 @debug color.adjust($buttonBg, $lightness: -15%);
 $buttonClr: $secondaryText;
 
 // Player
-$playerOneClr: #fd6486;
-$playerTwoClr: #ffce67;
+$playerOneClr: $red;
+$playerTwoClr: $yellow;
 
 // Disc wrapper
-$discWrapperBg: #ffffff;
+$discWrapperBg: $primaryBg;
 
 // Disc
 $discBg: #7945ff;
-$secondaryBg: #000000;
-$discSelectedBgPlayerOne: #fd6486;
-$discSelectedShadowClrPlayerOne: #7e3243;
-$discSelectedBgPlayerTwo: #ffce67;
-$discSelectedShadowClrPlayerTwo: #7f6633;
+$discSelectedBgPlayerOne: $red;
+$discSelectedShadowClrPlayerOne: $redDark;
+$discSelectedBgPlayerTwo: $yellow;
+$discSelectedShadowClrPlayerTwo: $yellowDark;
+
+@keyframes popupModal {
+  from {
+    transform: translate(-50%, -50%) scale(0);
+  }
+
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(1);
+  }
+}
+
+@keyframes hideModal {
+  50% {
+    transform: translate(-50%, -50%) scale(1.1);
+  }
+
+  to {
+    transform: translate(-50%, -50%) scale(0);
+  }
+}
 
 * {
   margin: 0;
@@ -60,7 +98,7 @@ img {
 
 #root {
   max-width: 700px;
-  margin: 0 auto;
+  margin: 2rem auto;
   display: grid;
   place-content: center;
 }
@@ -84,10 +122,10 @@ img {
 
   &[disabled] {
     opacity: 0.5;
-    cursor: default;
+    pointer-events: none;
   }
 
-  &:not([disabled]):hover {
+  &:hover {
     background-color: $buttonBgHover;
   }
 }
@@ -131,6 +169,23 @@ img {
   &.secondary {
     background-color: $playerTwoClr;
   }
+
+  &[disabled] {
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  &.has-icon {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.5rem 1rem;
+  }
+
+  &-icon {
+    height: $discSize;
+    margin-left: 1rem;
+  }
 }
 
 .menu {
@@ -141,7 +196,7 @@ img {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 2rem 0;
+  margin-bottom: 2rem;
 }
 
 .game-icon {
@@ -173,13 +228,13 @@ img {
   .player {
     &:first-of-type {
       .player-avatar {
-        left: -25px;
+        left: -(math.div($playerSize, 2));
       }
     }
 
     &:last-of-type {
       .player-avatar {
-        right: -25px;
+        right: -(math.div($playerSize, 2));
       }
     }
   }
@@ -199,8 +254,8 @@ img {
     top: 50%;
     transform: translateY(-50%);
     z-index: 5;
-    width: 50px;
-    height: 50px;
+    width: $playerSize;
+    height: $playerSize;
 
     &::before {
       content: "";
@@ -229,7 +284,14 @@ img {
     text-transform: uppercase;
     font-weight: $fwMedium;
     font-size: 1.25rem;
-    margin: 0 0.5rem;
+
+    &:first-of-type {
+      margin-left: math.div($playerSize, 2);
+    }
+
+    &:last-of-type {
+      margin-right: math.div($playerSize, 2);
+    }
   }
 }
 
@@ -319,40 +381,151 @@ img {
   }
 }
 
-.turn-box {
-  padding: 2rem;
-  padding-bottom: 0;
-  max-width: 15rem;
-  max-width: max-content;
+.game-box {
+  padding: 1rem 2rem;
   margin: 0 auto;
+  margin-top: -1rem;
   color: $secondaryText;
   text-align: center;
+  border-radius: 15px;
+  border: 3px solid $secondaryBg;
+  box-shadow: 0 10px 0 0 $secondaryBg;
   position: relative;
+  z-index: 5;
 
-  &-background {
+  &.turn-box {
+    background-color: $discSelectedBgPlayerOne;
+    max-width: 14rem;
+
+    .turn-box-player,
+    .turn-box-time {
+      color: $secondaryText;
+      font-weight: $fwMedium;
+    }
+
+    .turn-box-player {
+      font-size: 1.25rem;
+    }
+
+    .turn-box-time {
+      font-size: 4rem;
+    }
+  }
+
+  &.win-box,
+  &.tie-box {
+    background-color: $primaryBg;
+    max-width: 16rem;
+    max-width: max-content;
+
+    .win-or-tie-box-player,
+    .win-or-tie-box-state {
+      color: $primaryText;
+      font-weight: $fwMedium;
+    }
+
+    .win-or-tie-box-player {
+      font-size: 1.25rem;
+    }
+
+    .win-or-tie-box-state {
+      font-size: 4rem;
+      word-break: break-all;
+    }
+  }
+}
+
+.modal {
+  padding: 2rem;
+  box-shadow: 0 10px 0 0 $secondaryBg;
+  height: 80vh;
+  max-width: 50ch;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  animation: popupModal $modalPopupAnimationTime ease-in-out forwards;
+
+  &.closing {
+    animation: hideModal $modalHideAnimationTime ease-in-out forwards;
+  }
+
+  &-content {
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+  }
+
+  &,
+  &-close {
+    background-color: $primaryBg;
+    border: 3px solid $secondaryBg;
+    border-radius: 50px;
+  }
+
+  &-close {
+    cursor: pointer;
+    outline: 2px dashed transparent;
+    box-shadow: 0 5px 0 0 $secondaryBg;
+    display: inline-block;
+    width: $modalCloseSize;
+    height: $modalCloseSize;
     position: absolute;
-    top: -1rem;
+    bottom: -(math.div($modalCloseSize, 2));
     left: 50%;
-    z-index: 1;
     transform: translateX(-50%);
-    width: 15rem - 2rem;
-    pointer-events: none;
-    user-select: none;
+
+    &-img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      user-select: none;
+    }
   }
 
-  &-player,
-  &-time {
-    position: relative;
-    z-index: 5;
-  }
-
-  &-player {
-    font-size: 1.25rem;
+  &-heading,
+  &-subheading {
+    text-transform: uppercase;
     font-weight: $fwMedium;
   }
 
-  &-time {
+  &-heading {
+    color: $primaryText;
     font-size: 4rem;
+    text-align: center;
+  }
+
+  &-subheading {
+    color: $tertiaryText;
+    font-size: 1.5rem;
+    margin: 1rem 0;
+  }
+
+  &-paragraph {
+    font-size: 1rem;
     font-weight: $fwMedium;
+    color: $primaryTextSoft;
+    line-height: 1.25rem;
+  }
+
+  &-list {
+    list-style-type: none;
+    list-style-position: inside;
+
+    &-item {
+      margin-bottom: 0.5rem;
+      font-weight: $fwMedium;
+      color: $primaryTextSoft;
+      display: flex;
+      align-items: flex-start;
+
+      &-number {
+        min-width: 10px;
+        text-align: center;
+        color: $primaryText;
+        margin-right: 1rem;
+      }
+    }
   }
 }

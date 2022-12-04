@@ -1,10 +1,19 @@
 import AudioManager from "./AudioManager.js";
+import UIManager from "./UIManager.js";
 import Utils from "./Utils.js";
 
-let currentTurnTimer;
-let currentTurnTimeout;
-
 export default class GameManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new GameManager();
+    }
+    return this.instance;
+  }
+
+  currentTurnTimer;
+  currentTurnTimeout;
   players = {
     one: "1",
     two: "2",
@@ -16,40 +25,33 @@ export default class GameManager {
 
   constructor() {
     this.gameOver = false;
-    this.utils = new Utils();
-    this.audioManager = new AudioManager();
+    this.utils = Utils.getInstance();
+    this.audioManager = AudioManager.getInstance();
+    this.uiManager = UIManager.getInstance();
   }
 
+  /**
+   * Clear interval and timeout variables
+   */
   clearTimers() {
-    clearInterval(currentTurnTimer);
-    clearTimeout(currentTurnTimeout);
+    clearInterval(this.currentTurnTimer);
+    clearTimeout(this.currentTurnTimeout);
   }
 
-  clearTurn() {
+  /**
+   * Reset the current turn state including time
+   */
+  resetTurn() {
     this.playerWithTurn = this.initialTurn;
-    this.updateTurnPlayer(this.playerWithTurn);
-    this.updateTurnTime(this.timePerTurn);
-  }
-
-  resetDiscs(discs) {
-    discs.forEach((disc) =>
-      disc.classList.remove(
-        "filled",
-        `filled-${this.players.one}`,
-        `filled-${this.players.two}`,
-        `four-in-row`
-      )
-    );
+    this.clearTimers();
+    this.uiManager.resetTurn();
   }
 
   /**
    * Stop the current game session.
    */
   stopGame() {
-    const discs = this.utils.getAllDiscs();
-    const someDiscFilled = discs.some((disc) => {
-      return disc.classList.contains("filled");
-    });
+    const someDiscFilled = this.utils.someDiscFilled();
 
     // Avoid stop if not necessary
     if (!someDiscFilled) return;
@@ -57,28 +59,10 @@ export default class GameManager {
     const arrow = document.getElementById("arrow");
 
     arrow.classList.add("hidden");
+    this.gameStarted = false;
     this.gameOver = false;
-    this.clearTimers();
-    this.clearTurn();
-    this.resetDiscs(discs);
-  }
-
-  /**
-   * Updates the player text in the turn box.
-   * @param {string} player - The turn player's name to update.
-   */
-  updateTurnPlayer(player) {
-    const turnPlayer = document.getElementById("turn-box-player");
-    turnPlayer.innerHTML = `Player ${player}'s turn`;
-  }
-
-  /**
-   * Updates the time in the turn box.
-   * @param {number} time - The turn time to update.
-   */
-  updateTurnTime(time) {
-    const turnTime = document.getElementById("turn-box-time");
-    turnTime.innerText = time + "s";
+    this.resetTurn();
+    this.uiManager.resetDiscs();
   }
 
   /**
@@ -89,45 +73,44 @@ export default class GameManager {
       this.playerWithTurn === this.players.one
         ? this.players.two
         : this.players.one;
-    this.updateTurnPlayer(this.playerWithTurn);
-    this.updateTurnTime(this.timePerTurn);
+    this.uiManager.resetTurn();
   }
 
   /**
    * Updates turn time every second and shows it on screen.
-   * @returns The turn interval identifier.
    */
   updateTurnTimeEachSecond() {
     let timeLeft = this.timePerTurn;
-    const timer = setInterval(() => {
+    this.currentTurnTimer = setInterval(() => {
       // each second
       timeLeft--;
-      this.updateTurnTime(timeLeft);
+      this.uiManager.updateTurnTime(timeLeft);
     }, 1000);
-    return timer;
   }
 
   /**
    * Changes the current turn to opponent when turn time ends.
-   * @returns The turn timeout identifier.
    */
   changeTurnAfterTimeout() {
-    const timeout = setTimeout(() => {
+    this.currentTurnTimeout = setTimeout(() => {
       this.handleTurnChange();
     }, this.timePerTurn * 1000);
-    return timeout;
   }
 
   /**
    * Handles what happen with the game turns.
    */
   handleTurnChange() {
-    this.changeTurnToOpponent();
-    clearInterval(currentTurnTimer);
-    clearTimeout(currentTurnTimeout);
+    if (this.gameOver) return;
+    if (this.utils.allDiscFilled()) {
+      this.setTie();
+      return;
+    }
 
-    currentTurnTimer = this.updateTurnTimeEachSecond();
-    currentTurnTimeout = this.changeTurnAfterTimeout();
+    this.clearTimers();
+    this.changeTurnToOpponent();
+    this.updateTurnTimeEachSecond();
+    this.changeTurnAfterTimeout();
   }
 
   /**
@@ -144,11 +127,29 @@ export default class GameManager {
     return;
   }
 
-  setWin() {
+  /**
+   * Sets the game over to true and clear the timers
+   */
+  setGameOver() {
     this.gameOver = true;
-    console.log("Player " + this.playerWithTurn + " wins!");
-    this.audioManager.playSound("win");
+    this.clearTimers();
+  }
 
-    console.log({ currentTurnTimer, currentTurnTimeout });
+  /**
+   * Sets the game state to tie.
+   */
+  setTie() {
+    this.setGameOver();
+    this.uiManager.showTieBox();
+    this.audioManager.playSound("win");
+  }
+
+  /**
+   * Sets the game state to win.
+   */
+  setWin() {
+    this.setGameOver();
+    this.audioManager.playSound("win");
+    this.uiManager.showWinBox();
   }
 }

@@ -1,13 +1,27 @@
 import GameManager from "./GameManager.js";
+import Utils from "./Utils.js";
+
+const root = document.getElementById("root");
 
 export default class UIManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new UIManager();
+    }
+    return this.instance;
+  }
+
   constructor() {
     this.columns = 7;
     this.rows = 6;
     this.discSize = 50; // pixels
-    this.root = document.getElementById("root");
-    this.gameManager = new GameManager();
+    this.arrowMargin = 5; // pixels
+    this.modalCloseAnimationTime = 0.35; // seconds
+    this.utils = Utils.getInstance();
   }
+
   /**
    * Handles the game render.
    */
@@ -17,7 +31,9 @@ export default class UIManager {
     this.renderPlayers();
     this.renderBoard();
     this.renderArrow();
-    this.renderTurnBox();
+    this.renderGameBox();
+    this.showTurnBox();
+    this.resetTurn();
   }
 
   /**
@@ -26,7 +42,7 @@ export default class UIManager {
    */
   createArrow() {
     const arrow = new Image();
-    arrow.setAttribute("src", "./src/images/arrow-down.svg");
+    arrow.setAttribute("src", "./src/images/arrow.svg");
     arrow.classList.add("arrow");
     arrow.setAttribute("id", "arrow");
     arrow.classList.add("hidden");
@@ -49,7 +65,8 @@ export default class UIManager {
   moveArrow(disc) {
     const arrow = document.getElementById("arrow");
     const board = document.getElementById("board");
-    const boardTop = board.offsetTop - arrow.clientHeight / 2 + "px";
+    const boardTop =
+      board.offsetTop - arrow.clientHeight / 2 - this.arrowMargin + "px";
     const discLeft = disc.offsetLeft + "px";
 
     arrow.style.top = boardTop;
@@ -61,20 +78,30 @@ export default class UIManager {
    * Create a menu button.
    * @param {string} text - Text to use in the button.
    * @param {string} sound - The sound name to be used for the button.
+   * @param {string} icon - The icon image path to use in the button.
    * @returns The button element.
    */
-  createMenuButton(text, sound) {
+  createMenuButton(text, sound, icon) {
     if (!text) {
       throw new Error("a text must be provided for the button.");
     }
     const button = document.createElement("button");
     const buttonText = document.createTextNode(text);
+    button.classList.add(
+      "menu-button",
+      sound === "click" ? "click-sound" : "start-sound",
+      "hover-sound"
+    );
     button.appendChild(buttonText);
-    if (sound === "click") {
-      button.classList.add("menu-button", "click-sound", "hover-sound");
-    } else {
-      button.classList.add("menu-button", "start-sound", "hover-sound");
+
+    if (icon) {
+      const buttonIcon = new Image();
+      buttonIcon.setAttribute("src", icon);
+      buttonIcon.classList.add("menu-button-icon");
+      button.appendChild(buttonIcon);
+      button.classList.add("has-icon");
     }
+
     return button;
   }
 
@@ -84,12 +111,21 @@ export default class UIManager {
    */
   createMenuButtons() {
     const wrapper = document.createElement("div");
-    const playCPU = this.createMenuButton("Play vs CPU");
-    const playPlayer = this.createMenuButton("Play vs Player");
+    const playCPU = this.createMenuButton(
+      "Play vs CPU",
+      null,
+      "./src/images/play-vs-cpu.svg"
+    );
+    const playPlayer = this.createMenuButton(
+      "Play vs Player",
+      null,
+      "./src/images/play-vs-player.svg"
+    );
     const gameRules = this.createMenuButton("Game rules", "click");
 
     wrapper.classList.add("menu-buttons");
     playCPU.classList.add("primary");
+    playCPU.setAttribute("disabled", "");
     playCPU.setAttribute("id", "play-vs-cpu-button");
     playPlayer.classList.add("secondary");
     playPlayer.setAttribute("id", "play-vs-player-button");
@@ -103,7 +139,7 @@ export default class UIManager {
    * Displays the menu on screen and hide the game.
    */
   showMenu() {
-    this.gameManager.stopGame();
+    GameManager.getInstance().stopGame();
     const gameWrapper = document.getElementById("game");
     gameWrapper.remove();
     this.renderMenu();
@@ -111,12 +147,11 @@ export default class UIManager {
 
   /**
    * Displays the game layout on screen and hide the menu.
-   * @param {string} mode - Game mode for the renderGame
    */
-  showGame(mode) {
+  showGame() {
     const menu = document.getElementById("menu");
     menu.remove();
-    this.renderGame(mode);
+    this.renderGame();
   }
 
   /**
@@ -128,16 +163,235 @@ export default class UIManager {
     menuWrapper.setAttribute("id", "menu");
     menuWrapper.classList.add("menu");
     menuWrapper.appendChild(menuButtons);
-    this.root.appendChild(menuWrapper);
+    root.appendChild(menuWrapper);
   }
 
   /**
-   * Render a game wrapper in DOM for the game elements.
+   * Renders a game wrapper in the DOM for the game elements.
    */
   renderGameWrapper() {
     const wrapper = document.createElement("div");
     wrapper.setAttribute("id", "game");
-    this.root.appendChild(wrapper);
+    root.appendChild(wrapper);
+  }
+
+  /**
+   * Closes the one opened modal.
+   */
+  closeModal() {
+    const modal = document.getElementById("modal");
+    modal.classList.add("closing");
+
+    const removeAfter = setTimeout(() => {
+      modal.remove();
+      clearTimeout(removeAfter);
+    }, this.modalCloseAnimationTime * 1000);
+  }
+
+  /**
+   * Creates a modal with the given content.
+   * @param {HTMLElement} content - The HTML content that the modal will contain.
+   * @returns The modal element created.
+   */
+  createModal(content) {
+    if (!content) {
+      throw new Error("Content must be provided to create a modal.");
+    }
+
+    const modal = document.createElement("div");
+    modal.setAttribute("id", "modal");
+    modal.classList.add("modal");
+
+    const modalCloseIcon = new Image();
+    modalCloseIcon.setAttribute("src", "./src/images/check.svg");
+    modalCloseIcon.classList.add("modal-close-img");
+
+    const modalCloseButton = document.createElement("button");
+    modalCloseButton.setAttribute("id", "close-modal");
+    modalCloseButton.classList.add("modal-close");
+    modalCloseButton.appendChild(modalCloseIcon);
+
+    const modalContent = document.createElement("div");
+    modalContent.classList.add("modal-content");
+    modalContent.appendChild(content);
+
+    modal.append(modalContent, modalCloseButton);
+    return modal;
+  }
+
+  /**
+   * Creates a subheading element for the modal.
+   * @param {string} text - The text to use in the modal subheading.
+   * @returns The created subheading element.
+   */
+  createModalSubheading(text) {
+    const subheading = document.createElement("h3");
+    const subheadingText = document.createTextNode(text);
+    subheading.appendChild(subheadingText);
+    subheading.classList.add("modal-subheading");
+    return subheading;
+  }
+
+  /**
+   * Creates a paragraph element for the modal.
+   * @param {string} text - The text to use in the modal paragraph.
+   * @returns The created paragraph element.
+   */
+  createModalParagraph(text) {
+    const paragraphText = document.createTextNode(text);
+    const paragraph = document.createElement("p");
+    paragraph.classList.add("modal-paragraph");
+    paragraph.appendChild(paragraphText);
+    return paragraph;
+  }
+
+  /**
+   * Creates a list for the modal.
+   * @param {object} items - An array with a list of texts that will be used as list items.
+   * @returns The created list element.
+   */
+  createModalList(items) {
+    const list = document.createElement("ul");
+    list.classList.add("modal-list");
+
+    items.forEach((item, i) => {
+      if (typeof item !== "string") {
+        throw new Error(
+          "Items must be strings in order to use them in the modal."
+        );
+      }
+
+      const listItem = document.createElement("li");
+      const listItemNumber = document.createElement("span");
+      const listItemNumberText = document.createTextNode(i + 1);
+      const listItemText = document.createTextNode(item);
+      listItemNumber.appendChild(listItemNumberText);
+      listItemNumber.classList.add("modal-list-item-number");
+      listItem.append(listItemNumber, listItemText);
+      listItem.classList.add("modal-list-item");
+      list.appendChild(listItem);
+    });
+
+    return list;
+  }
+
+  /**
+   * Creates the HTML content for the rules.
+   * @returns The created content.
+   */
+  createRulesContent() {
+    const content = document.createDocumentFragment();
+
+    const heading = document.createElement("h2");
+    const headingText = document.createTextNode("Rules");
+    heading.appendChild(headingText);
+    heading.classList.add("modal-heading", "big");
+
+    const objectiveSubheading = this.createModalSubheading("Objective");
+    const objectiveParagraphText =
+      "Be the first player to connect 4 of the same colored discs in a row (either vertically, horizontally, or diagonally).";
+    const objectiveParagraph = this.createModalParagraph(
+      objectiveParagraphText
+    );
+
+    const howToPlaySubheading = this.createModalSubheading("How to play");
+    const howToPlayListText = [
+      "Red goes first in the first game.",
+      "Players must alternate turns, and only one disc can be dropped in each turn.",
+      "The game ends when there is a 4-in-a-row or a stalemate.",
+      "The starter of the previous game goes second on the next game.",
+    ];
+    const howToPlayList = this.createModalList(howToPlayListText);
+
+    content.append(
+      heading,
+      objectiveSubheading,
+      objectiveParagraph,
+      howToPlaySubheading,
+      howToPlayList
+    );
+    return content;
+  }
+
+  /**
+   * Displays the rules modal on screen.
+   */
+  showRules() {
+    const rulesContent = this.createRulesContent();
+    const rulesModal = this.createModal(rulesContent);
+    root.appendChild(rulesModal);
+  }
+
+  /**
+   * Creates the text for the win or tie box.
+   * @returns The text wrapper element.
+   */
+  createWinOrTieBoxText(winOrTie) {
+    const wrapper = document.createElement("div");
+
+    // Player text
+    const player = document.createElement("span");
+    const playerWinner = GameManager.getInstance().playerWithTurn;
+    const playerText = document.createTextNode(`Player ${playerWinner}`);
+    player.classList.add("win-or-tie-box-player");
+    player.appendChild(playerText);
+
+    // Win or tie text
+    const winOrTieContainer = document.createElement("p");
+    const winOrTieText = document.createTextNode(
+      winOrTie === "win" ? "Wins" : "Tie"
+    );
+    winOrTieContainer.classList.add("win-or-tie-box-state");
+    winOrTieContainer.appendChild(winOrTieText);
+
+    // Play again button
+    const playAgain = this.createGameButton("Play again");
+    playAgain.setAttribute("id", "play-again-button");
+
+    wrapper.setAttribute("id", "win-or-tie-box-text");
+    wrapper.append(player, winOrTieContainer, playAgain);
+    return wrapper;
+  }
+
+  /**
+   * Displays the tie box on screen.
+   */
+  showTieBox() {
+    this.showWinOrTieBox("tie");
+  }
+
+  /**
+   * Displays the win box on screen.
+   */
+  showWinBox() {
+    this.showWinOrTieBox("win");
+  }
+
+  /**
+   * Change the content of the game box. Removes existing boxes first.
+   * @param {string} winOrTie - The type of state to display in game box.
+   */
+  showWinOrTieBox(winOrTie) {
+    const turnBoxText = document.getElementById("turn-box-text");
+    if (turnBoxText) turnBoxText.remove();
+
+    const winOrTieBoxText = document.getElementById("win-or-tie-box-text");
+    if (winOrTieBoxText) winOrTieBoxText.remove();
+
+    const gameBox = document.getElementById("game-box");
+    gameBox.classList.remove("turn-box", "win-box", "tie-box");
+
+    if (winOrTie === "win") {
+      const winBoxText = this.createWinOrTieBoxText("win");
+      gameBox.classList.add("win-box");
+      gameBox.appendChild(winBoxText);
+      return;
+    } else if (winOrTie === "tie") {
+      const tieBoxText = this.createWinOrTieBoxText("tie");
+      gameBox.classList.add("tie-box");
+      gameBox.appendChild(tieBoxText);
+      return;
+    }
   }
 
   /**
@@ -145,7 +399,7 @@ export default class UIManager {
    * @returns The created wrapper element with the turn box text.
    */
   createTurnBoxText() {
-    const wrapper = document.createDocumentFragment();
+    const wrapper = document.createElement("div");
 
     // Player text
     const player = document.createElement("p");
@@ -157,37 +411,79 @@ export default class UIManager {
     turnTimeContainer.setAttribute("id", "turn-box-time");
     turnTimeContainer.classList.add("turn-box-time");
 
+    wrapper.setAttribute("id", "turn-box-text");
     wrapper.append(player, turnTimeContainer);
     return wrapper;
   }
 
   /**
-   * Create a turn box with its text.
-   * @returns The created turn box element.
+   * Converts the game box to a turn box
    */
-  createTurnBox() {
+  showTurnBox() {
+    const winOrTieBoxText = document.getElementById("win-or-tie-box-text");
+    if (winOrTieBoxText) winOrTieBoxText.remove();
+
+    const turnBoxText = this.createTurnBoxText();
+    const gameBox = document.getElementById("game-box");
+    gameBox.classList.remove("win-box", "tie-box");
+    gameBox.classList.add("turn-box");
+    gameBox.appendChild(turnBoxText);
+  }
+
+  /**
+   * Displays the game box on screen.
+   */
+  renderGameBox() {
+    const gameBox = this.createGameBox();
+    const gameWrapper = document.getElementById("game");
+    gameWrapper.appendChild(gameBox);
+  }
+
+  /**
+   * Create a game box (to use with turn box, win box, etc).
+   * @returns The created game box element.
+   */
+  createGameBox() {
     const box = document.createElement("div");
-    box.setAttribute("id", "turn-box");
-    box.classList.add("turn-box");
-
-    const background = new Image();
-    background.setAttribute("src", "./src/images/turn-box.svg");
-    background.classList.add("turn-box-background");
-
-    const text = this.createTurnBoxText();
-    box.append(background, text);
+    box.setAttribute("id", "game-box");
+    box.classList.add("game-box");
     return box;
   }
 
   /**
-   * Displays the turn box on screen.
+   * Reset the current player turn and time on screen
    */
-  renderTurnBox() {
-    const turnBox = this.createTurnBox();
-    const gameWrapper = document.getElementById("game");
-    gameWrapper.appendChild(turnBox);
-    this.gameManager.updateTurnPlayer(this.gameManager.playerWithTurn);
-    this.gameManager.updateTurnTime(this.gameManager.timePerTurn);
+  resetTurn() {
+    this.updateTurnPlayer(GameManager.getInstance().playerWithTurn);
+    this.updateTurnTime(GameManager.getInstance().timePerTurn);
+  }
+
+  /**
+   * Updates the player text in the turn box.
+   * @param {string} player - The turn player's name to update.
+   */
+  updateTurnPlayer(player) {
+    const turnPlayer = document.getElementById("turn-box-player");
+    if (!turnPlayer) {
+      this.showTurnBox();
+      this.updateTurnPlayer(player);
+      return;
+    }
+    turnPlayer.innerHTML = `Player ${player}'s turn`;
+  }
+
+  /**
+   * Updates the time in the turn box.
+   * @param {number} time - The turn time to update.
+   */
+  updateTurnTime(time) {
+    const turnTime = document.getElementById("turn-box-time");
+    if (!turnTime) {
+      this.showTurnBox();
+      this.updateTurnTime(time);
+      return;
+    }
+    turnTime.innerText = time + "s";
   }
 
   /**
@@ -238,7 +534,7 @@ export default class UIManager {
     );
     const playerTwo = this.createPlayer(
       "Player 2",
-      "./src/images/player-2-reversed.svg"
+      "./src/images/player-2.svg"
     );
     playersWrapper.append(playerOne, playerTwo);
     gameWrapper.appendChild(playersWrapper);
@@ -292,6 +588,21 @@ export default class UIManager {
     header.classList.add("game-header");
     header.append(menuButton, gameIcon, restartButton);
     gameWrapper.appendChild(header);
+  }
+
+  /**
+   * Reset all discs UI state
+   */
+  resetDiscs() {
+    const discs = this.utils.getAllDiscs();
+    discs.forEach((disc) =>
+      disc.classList.remove(
+        "filled",
+        `filled-${GameManager.getInstance().players.one}`,
+        `filled-${GameManager.getInstance().players.two}`,
+        `four-in-row`
+      )
+    );
   }
 
   /**

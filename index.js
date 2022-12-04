@@ -1,24 +1,25 @@
 import UIManager from "./src/modules/UIManager.js";
 import EventManager from "./src/modules/EventManager.js";
 
-/*
-TODO
-- [x] Hide top buttons on main menu.
-- [x] Separate code into files.
-- [x] Remake game functionality:
-  Connect 4 discs, either horizontal, vertical o diagonal. The discs MUST BEEN DROPPED FROM THE TOP.
-- [x] Each disc must have a position Y and X:
-  Position Y will be first 1, then if data-id % columns === 0, the Y will be current Y + 1
-- [x] When player clicks a disc, search 3 filled sibling discs of the disc filled by that click.
-*/
+/**
+ * TODO:
+ * - [x] Add icons to the menu buttons.
+ * - Change game box color when turn changes.
+ * - [x] Show the game rules when user clicks Game rules button.
+ * - Add favicon.
+ * - When the turn time ends, the game must show a Lose game box.
+ * - Find a bug where the four-in-row check doesn't work correctly.
+ * and the game continue even with a four-in-row (it occurs when I try to get a tie).
+ * - End with mobile/tablet/desktop design.
+ * - Try to improve RAM utilization when user clicks something.
+ */
 
 /**
  * Handles the application initialization.
  */
 function init() {
-  const uiManager = new UIManager();
-  const eventManager = new EventManager();
-  uiManager.renderMenu();
-  eventManager.handleEvents();
+  UIManager.getInstance().renderMenu();
+  EventManager.getInstance().handleEvents();
 }
+
 init();

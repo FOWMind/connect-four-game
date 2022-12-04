@@ -4,18 +4,31 @@ import UIManager from "./UIManager.js";
 import Utils from "./Utils.js";
 
 export default class EventManager {
+  static instance;
+
+  static getInstance() {
+    if (!this.instance) {
+      this.instance = new EventManager();
+    }
+    return this.instance;
+  }
+
   constructor() {
-    this.uiManager = new UIManager();
-    this.utils = new Utils();
-    this.gameManager = new GameManager();
-    this.audioManager = new AudioManager();
+    this.uiManager = UIManager.getInstance();
+    this.audioManager = AudioManager.getInstance();
+    this.gameManager = GameManager.getInstance();
+    this.utils = Utils.getInstance();
   }
 
   /**
    * Manage what happens with each event in the application.
    */
   handleEvents() {
+    let clickedDisc;
+
     document.addEventListener("click", ({ target }) => {
+      if (target.getAttribute("disabled")) return;
+
       // Menu
       const playCPUButton = document.getElementById("play-vs-cpu-button");
       const playPlayerButton = document.getElementById("play-vs-player-button");
@@ -24,9 +37,13 @@ export default class EventManager {
       // Game
       const menuButton = document.getElementById("menu-button");
       const restartButton = document.getElementById("restart-button");
+      const playAgainButton = document.getElementById("play-again-button");
       const isClickedDisc = target.id === "disc";
       const isClickSound = target.classList.contains("click-sound");
       const isStartSound = target.classList.contains("start-sound");
+
+      // General
+      const closeModalButton = document.getElementById("close-modal");
 
       if (isClickSound) {
         this.audioManager.playSound("click");
@@ -35,26 +52,23 @@ export default class EventManager {
       }
 
       if (target === playCPUButton) {
-        return console.log("play vs cpu");
+        // return console.log("play vs cpu");
+        return;
       } else if (target === playPlayerButton) {
-        console.log("play vs player");
-        return this.uiManager.showGame("player");
+        this.uiManager.showGame("player");
       } else if (target === gameRulesButton) {
-        return console.log("opening game rules");
+        this.uiManager.showRules();
       } else if (target === menuButton) {
-        return this.uiManager.showMenu();
-      } else if (target === restartButton) {
-        if (restartButton) {
-          this.gameManager.gameStarted = false;
-          restartButton.setAttribute("disabled", "");
-        }
-        return this.gameManager.stopGame();
+        this.uiManager.showMenu();
+      } else if (target === restartButton || target === playAgainButton) {
+        if (restartButton) restartButton.setAttribute("disabled", "");
+        this.gameManager.stopGame();
       } else if (isClickedDisc) {
-        if (restartButton) {
-          this.gameManager.gameStarted = true;
-          restartButton.removeAttribute("disabled");
-        }
-        return this.handleDiscClick(target);
+        clickedDisc = target;
+        if (restartButton) restartButton.removeAttribute("disabled");
+        this.handleDiscClick(target);
+      } else if (target === closeModalButton) {
+        this.uiManager.closeModal();
       }
     });
 
@@ -65,6 +79,11 @@ export default class EventManager {
         this.audioManager.playSound("hover");
       }
     });
+
+    window.addEventListener("resize", () => {
+      if (!clickedDisc) return;
+      this.uiManager.moveArrow(clickedDisc);
+    });
   }
 
   /**
@@ -73,6 +92,7 @@ export default class EventManager {
    */
   handleDiscClick(clickedDisc) {
     if (this.gameManager.gameOver) return;
+    this.gameManager.gameStarted = true;
 
     const lastAvailableDisc = this.utils.handleLastAvailableDisc(clickedDisc);
     if (!lastAvailableDisc) return;

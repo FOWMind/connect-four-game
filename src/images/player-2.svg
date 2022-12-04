@@ -1,8 +1,7 @@
 <svg width="110" height="110" viewBox="0 0 110 110" fill="none" xmlns="http://www.w3.org/2000/svg">
-<rect x="2.5" y="2.5" width="105" height="105" rx="52.5" fill="#FFCE67"/>
-<circle cx="63" cy="45" r="32.5" stroke="black" stroke-width="5"/>
-<path d="M26 46.5C26 25.7893 42.7893 9 63.5 9V9C84.2107 9 101 25.7893 101 46.5V60H26V46.5Z" fill="#FFCE67"/>
-<rect x="55" y="40" width="5" height="15" fill="black"/>
-<rect x="73" y="40" width="5" height="15" fill="black"/>
-<rect x="2.5" y="2.5" width="105" height="105" rx="52.5" stroke="black" stroke-width="5"/>
+<rect x="2.5" y="-2.5" width="105" height="105" rx="52.5" transform="matrix(-1 0 0 1 110 5)" fill="#FFCE67"/>
+<rect width="6" height="15" rx="3" transform="matrix(-1 0 0 1 56 40)" fill="black"/>
+<rect width="6" height="15" rx="3" transform="matrix(-1 0 0 1 38 40)" fill="black"/>
+<path d="M23.1595 60.5894C28.6127 67.0398 36.4022 73.1696 45.4009 74.6108C54.3765 76.0484 64.6198 72.8308 75.0237 60.4553C75.7963 59.5363 76.9798 59.3391 77.9579 59.6595C78.9379 59.9805 79.75 60.8351 79.75 62.0455C79.75 62.6129 79.5433 63.1771 79.1818 63.6124C66.6605 78.6901 54.0783 81.9477 43.3625 79.7648C32.6734 77.5874 23.9002 70.0084 18.9407 63.5215C18.6359 63.1229 18.4845 62.6434 18.4845 62.1483C18.4845 60.9765 19.3037 60.1512 20.2719 59.8382C21.2385 59.5257 22.4106 59.7036 23.1595 60.5894Z" fill="black" stroke="black" stroke-width="0.5"/>
+<rect x="2.5" y="-2.5" width="105" height="105" rx="52.5" transform="matrix(-1 0 0 1 110 5)" stroke="black" stroke-width="5"/>
 </svg>
