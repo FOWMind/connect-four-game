@@ -18,6 +18,7 @@ export default class UIManager {
     this.rows = 6;
     this.discSize = 50; // pixels
     this.arrowMargin = 5; // pixels
+    this.modalCloseAnimationTime = 0.35; // seconds
     this.utils = Utils.getInstance();
   }
 
@@ -172,6 +173,153 @@ export default class UIManager {
     const wrapper = document.createElement("div");
     wrapper.setAttribute("id", "game");
     root.appendChild(wrapper);
+  }
+
+  /**
+   * Closes the one opened modal.
+   */
+  closeModal() {
+    const modal = document.getElementById("modal");
+    modal.classList.add("closing");
+
+    const removeAfter = setTimeout(() => {
+      modal.remove();
+      clearTimeout(removeAfter);
+    }, this.modalCloseAnimationTime * 1000);
+  }
+
+  /**
+   * Creates a modal with the given content.
+   * @param {HTMLElement} content - The HTML content that the modal will contain.
+   * @returns The modal element created.
+   */
+  createModal(content) {
+    if (!content) {
+      throw new Error("Content must be provided to create a modal.");
+    }
+
+    const modal = document.createElement("div");
+    modal.setAttribute("id", "modal");
+    modal.classList.add("modal");
+
+    const modalCloseIcon = new Image();
+    modalCloseIcon.setAttribute("src", "./src/images/check.svg");
+    modalCloseIcon.classList.add("modal-close-img");
+
+    const modalCloseButton = document.createElement("button");
+    modalCloseButton.setAttribute("id", "close-modal");
+    modalCloseButton.classList.add("modal-close");
+    modalCloseButton.appendChild(modalCloseIcon);
+
+    const modalContent = document.createElement("div");
+    modalContent.classList.add("modal-content");
+    modalContent.appendChild(content);
+
+    modal.append(modalContent, modalCloseButton);
+    return modal;
+  }
+
+  /**
+   * Creates a subheading element for the modal.
+   * @param {string} text - The text to use in the modal subheading.
+   * @returns The created subheading element.
+   */
+  createModalSubheading(text) {
+    const subheading = document.createElement("h3");
+    const subheadingText = document.createTextNode(text);
+    subheading.appendChild(subheadingText);
+    subheading.classList.add("modal-subheading");
+    return subheading;
+  }
+
+  /**
+   * Creates a paragraph element for the modal.
+   * @param {string} text - The text to use in the modal paragraph.
+   * @returns The created paragraph element.
+   */
+  createModalParagraph(text) {
+    const paragraphText = document.createTextNode(text);
+    const paragraph = document.createElement("p");
+    paragraph.classList.add("modal-paragraph");
+    paragraph.appendChild(paragraphText);
+    return paragraph;
+  }
+
+  /**
+   * Creates a list for the modal.
+   * @param {object} items - An array with a list of texts that will be used as list items.
+   * @returns The created list element.
+   */
+  createModalList(items) {
+    const list = document.createElement("ul");
+    list.classList.add("modal-list");
+
+    items.forEach((item, i) => {
+      if (typeof item !== "string") {
+        throw new Error(
+          "Items must be strings in order to use them in the modal."
+        );
+      }
+
+      const listItem = document.createElement("li");
+      const listItemNumber = document.createElement("span");
+      const listItemNumberText = document.createTextNode(i + 1);
+      const listItemText = document.createTextNode(item);
+      listItemNumber.appendChild(listItemNumberText);
+      listItemNumber.classList.add("modal-list-item-number");
+      listItem.append(listItemNumber, listItemText);
+      listItem.classList.add("modal-list-item");
+      list.appendChild(listItem);
+    });
+
+    return list;
+  }
+
+  /**
+   * Creates the HTML content for the rules.
+   * @returns The created content.
+   */
+  createRulesContent() {
+    const content = document.createDocumentFragment();
+
+    const heading = document.createElement("h2");
+    const headingText = document.createTextNode("Rules");
+    heading.appendChild(headingText);
+    heading.classList.add("modal-heading", "big");
+
+    const objectiveSubheading = this.createModalSubheading("Objective");
+    const objectiveParagraphText =
+      "Be the first player to connect 4 of the same colored discs in a row (either vertically, horizontally, or diagonally).";
+    const objectiveParagraph = this.createModalParagraph(
+      objectiveParagraphText
+    );
+
+    const howToPlaySubheading = this.createModalSubheading("How to play");
+    const howToPlayListText = [
+      "Red goes first in the first game.",
+      "Players must alternate turns, and only one disc can be dropped in each turn.",
+      "The game ends when there is a 4-in-a-row or a stalemate.",
+      "The starter of the previous game goes second on the next game.",
+    ];
+    const howToPlayList = this.createModalList(howToPlayListText);
+
+    content.append(
+      heading,
+      objectiveSubheading,
+      objectiveParagraph,
+      howToPlaySubheading,
+      howToPlayList
+    );
+    return content;
+  }
+
+  /**
+   * Displays the rules modal on screen.
+   */
+  showRules() {
+    const rulesContent = this.createRulesContent();
+    const rulesModal = this.createModal(rulesContent);
+    root.appendChild(rulesModal);
   }
 
   /**

@@ -27,6 +27,8 @@ export default class EventManager {
     let clickedDisc;
 
     document.addEventListener("click", ({ target }) => {
+      if (target.getAttribute("disabled")) return;
+
       // Menu
       const playCPUButton = document.getElementById("play-vs-cpu-button");
       const playPlayerButton = document.getElementById("play-vs-player-button");
@@ -40,6 +42,9 @@ export default class EventManager {
       const isClickSound = target.classList.contains("click-sound");
       const isStartSound = target.classList.contains("start-sound");
 
+      // General
+      const closeModalButton = document.getElementById("close-modal");
+
       if (isClickSound) {
         this.audioManager.playSound("click");
       } else if (isStartSound) {
@@ -50,19 +55,20 @@ export default class EventManager {
         // return console.log("play vs cpu");
         return;
       } else if (target === playPlayerButton) {
-        console.log("play vs player");
-        return this.uiManager.showGame("player");
+        this.uiManager.showGame("player");
       } else if (target === gameRulesButton) {
-        return console.log("opening game rules");
+        this.uiManager.showRules();
       } else if (target === menuButton) {
-        return this.uiManager.showMenu();
+        this.uiManager.showMenu();
       } else if (target === restartButton || target === playAgainButton) {
         if (restartButton) restartButton.setAttribute("disabled", "");
-        return this.gameManager.stopGame();
+        this.gameManager.stopGame();
       } else if (isClickedDisc) {
         clickedDisc = target;
         if (restartButton) restartButton.removeAttribute("disabled");
-        return this.handleDiscClick(target);
+        this.handleDiscClick(target);
+      } else if (closeModalButton) {
+        this.uiManager.closeModal();
       }
     });
 
