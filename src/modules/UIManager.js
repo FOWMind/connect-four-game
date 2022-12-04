@@ -204,10 +204,12 @@ export default class UIManager {
 
     const modalCloseIcon = new Image();
     modalCloseIcon.setAttribute("src", "./src/images/check.svg");
+    modalCloseIcon.setAttribute("alt", "Close modal");
     modalCloseIcon.classList.add("modal-close-img");
 
     const modalCloseButton = document.createElement("button");
     modalCloseButton.setAttribute("id", "close-modal");
+    modalCloseButton.setAttribute("title", "Close modal");
     modalCloseButton.classList.add("modal-close");
     modalCloseButton.appendChild(modalCloseIcon);
 

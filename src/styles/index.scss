@@ -437,9 +437,13 @@ img {
 
 .modal {
   padding: 2rem;
+  background-color: $primaryBg;
+  border: 3px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
-  height: 80vh;
+  width: 90vw;
   max-width: 50ch;
+  height: 80vh;
+  max-height: 32rem;
   position: fixed;
   top: 50%;
   left: 50%;
@@ -458,15 +462,14 @@ img {
 
   &,
   &-close {
-    background-color: $primaryBg;
-    border: 3px solid $secondaryBg;
     border-radius: 50px;
   }
 
   &-close {
     cursor: pointer;
     outline: 2px dashed transparent;
-    box-shadow: 0 5px 0 0 $secondaryBg;
+    border: none;
+    background: none;
     display: inline-block;
     width: $modalCloseSize;
     height: $modalCloseSize;
@@ -474,11 +477,12 @@ img {
     bottom: -(math.div($modalCloseSize, 2));
     left: 50%;
     transform: translateX(-50%);
+    z-index: 5;
 
     &-img {
       width: 100%;
       height: 100%;
-      object-fit: cover;
+      object-fit: contain;
       pointer-events: none;
       user-select: none;
     }
