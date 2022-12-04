@@ -67,7 +67,7 @@ export default class EventManager {
         clickedDisc = target;
         if (restartButton) restartButton.removeAttribute("disabled");
         this.handleDiscClick(target);
-      } else if (closeModalButton) {
+      } else if (target === closeModalButton) {
         this.uiManager.closeModal();
       }
     });
