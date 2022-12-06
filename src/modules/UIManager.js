@@ -1,3 +1,4 @@
+import AudioManager from "./AudioManager.js";
 import GameManager from "./GameManager.js";
 import Utils from "./Utils.js";
 
@@ -77,21 +78,16 @@ export default class UIManager {
   /**
    * Create a menu button.
    * @param {string} text - Text to use in the button.
-   * @param {string} sound - The sound name to be used for the button.
    * @param {string} icon - The icon image path to use in the button.
-   * @returns The button element.
+   * @returns The created button element.
    */
-  createMenuButton(text, sound, icon) {
+  createMenuButton(text, icon) {
     if (!text) {
       throw new Error("a text must be provided for the button.");
     }
     const button = document.createElement("button");
     const buttonText = document.createTextNode(text);
-    button.classList.add(
-      "menu-button",
-      sound === "click" ? "click-sound" : "start-sound",
-      "hover-sound"
-    );
+    button.classList.add("menu-button", "hover-sound");
     button.appendChild(buttonText);
 
     if (icon) {
@@ -107,21 +103,19 @@ export default class UIManager {
 
   /**
    * Create all menu buttons.
-   * @returns The button wrapper element.
+   * @returns The created button wrapper element.
    */
   createMenuButtons() {
     const wrapper = document.createElement("div");
     const playCPU = this.createMenuButton(
       "Play vs CPU",
-      null,
       "./src/images/play-vs-cpu.svg"
     );
     const playPlayer = this.createMenuButton(
       "Play vs Player",
-      null,
       "./src/images/play-vs-player.svg"
     );
-    const gameRules = this.createMenuButton("Game rules", "click");
+    const gameRules = this.createMenuButton("Game rules");
 
     wrapper.classList.add("menu-buttons");
     playCPU.classList.add("primary");
@@ -176,11 +170,28 @@ export default class UIManager {
   }
 
   /**
+   * Sets the disabled attribute or remove it from the restart button depending on value.
+   * @param {boolean} value - The value that will be used to disable or enable the restart button. Must be true or false
+   */
+  setRestartButtonDisabled(value) {
+    const restartButton = document.getElementById("restart-button");
+    if (!restartButton) return;
+
+    if (value === true) {
+      restartButton.setAttribute("disabled", "");
+    } else if (value === false) {
+      restartButton.removeAttribute("disabled");
+    }
+  }
+
+  /**
    * Closes the one opened modal.
    */
   closeModal() {
     const modal = document.getElementById("modal");
+    if (!modal) return;
     modal.classList.add("closing");
+    AudioManager.getInstance().playSound("closeModal");
 
     const removeAfter = setTimeout(() => {
       modal.remove();
@@ -191,9 +202,10 @@ export default class UIManager {
   /**
    * Creates a modal with the given content.
    * @param {HTMLElement} content - The HTML content that the modal will contain.
+   * @param {string} type - The type of modal to create (example: "confirmDialog").
    * @returns The modal element created.
    */
-  createModal(content) {
+  createModal(content, type, actionName) {
     if (!content) {
       throw new Error("Content must be provided to create a modal.");
     }
@@ -202,22 +214,36 @@ export default class UIManager {
     modal.setAttribute("id", "modal");
     modal.classList.add("modal");
 
-    const modalCloseIcon = new Image();
-    modalCloseIcon.setAttribute("src", "./src/images/check.svg");
-    modalCloseIcon.setAttribute("alt", "Close modal");
-    modalCloseIcon.classList.add("modal-close-img");
-
-    const modalCloseButton = document.createElement("button");
-    modalCloseButton.setAttribute("id", "close-modal");
-    modalCloseButton.setAttribute("title", "Close modal");
-    modalCloseButton.classList.add("modal-close");
-    modalCloseButton.appendChild(modalCloseIcon);
-
     const modalContent = document.createElement("div");
     modalContent.classList.add("modal-content");
     modalContent.appendChild(content);
+    modal.append(modalContent);
 
-    modal.append(modalContent, modalCloseButton);
+    if (type === "confirmDialog" && actionName) {
+      const acceptButton = this.createGameButton("Yes");
+      acceptButton.classList.add("accept-button");
+      acceptButton.setAttribute("action", actionName);
+
+      const rejectButton = this.createGameButton("No");
+      rejectButton.classList.add("reject-button");
+      rejectButton.setAttribute("id", "close-modal");
+
+      modal.append(acceptButton, rejectButton);
+      modal.classList.add("auto-size", "confirm-dialog");
+    } else {
+      const modalCloseIcon = new Image();
+      modalCloseIcon.setAttribute("src", "./src/images/check.svg");
+      modalCloseIcon.setAttribute("alt", "Close modal");
+      modalCloseIcon.classList.add("modal-close-img");
+
+      const modalCloseButton = document.createElement("button");
+      modalCloseButton.setAttribute("id", "close-modal");
+      modalCloseButton.setAttribute("title", "Close modal");
+      modalCloseButton.classList.add("modal-close");
+      modalCloseButton.appendChild(modalCloseIcon);
+      modal.appendChild(modalCloseButton);
+    }
+
     return modal;
   }
 
@@ -278,6 +304,41 @@ export default class UIManager {
   }
 
   /**
+   * Creates a confirm dialog in form of modal with the provided text.
+   * @param {string} text - The text to use in the confirm dialog.
+   * @returns The created confirm dialog modal element.
+   */
+  createConfirmDialog(text) {
+    if (!text) {
+      throw new Error(
+        "Text must be provided in order to create a confirm dialog."
+      );
+    }
+
+    const dialogTextContainer = document.createElement("p");
+    const dialogText = document.createTextNode(text);
+    dialogTextContainer.appendChild(dialogText);
+    dialogTextContainer.classList.add("confirm-dialog-text");
+
+    const dialogModal = this.createModal(
+      dialogTextContainer,
+      "confirmDialog",
+      "restart-game"
+    );
+    return dialogModal;
+  }
+
+  /**
+   * Displays a confirm dialog modal with the provided text on screen.
+   * @param {string} text - The text to use in the confirm dialog.
+   */
+  showConfirmDialog(text) {
+    const dialog = this.createConfirmDialog(text);
+    AudioManager.getInstance().playSound("openModal");
+    root.appendChild(dialog);
+  }
+
+  /**
    * Creates the HTML content for the rules.
    * @returns The created content.
    */
@@ -325,6 +386,16 @@ export default class UIManager {
   }
 
   /**
+   * Creates a button with the text "Play Again"
+   * @returns The created Play Again button.
+   */
+  createPlayAgainButton() {
+    const playAgain = this.createGameButton("Play again");
+    playAgain.setAttribute("id", "play-again-button");
+    return playAgain;
+  }
+
+  /**
    * Creates the text for the win or tie box.
    * @returns The text wrapper element.
    */
@@ -335,7 +406,7 @@ export default class UIManager {
     const player = document.createElement("span");
     const playerWinner = GameManager.getInstance().playerWithTurn;
     const playerText = document.createTextNode(`Player ${playerWinner}`);
-    player.classList.add("win-or-tie-box-player");
+    player.classList.add("game-box-player");
     player.appendChild(playerText);
 
     // Win or tie text
@@ -343,12 +414,11 @@ export default class UIManager {
     const winOrTieText = document.createTextNode(
       winOrTie === "win" ? "Wins" : "Tie"
     );
-    winOrTieContainer.classList.add("win-or-tie-box-state");
+    winOrTieContainer.classList.add("game-box-state");
     winOrTieContainer.appendChild(winOrTieText);
 
     // Play again button
-    const playAgain = this.createGameButton("Play again");
-    playAgain.setAttribute("id", "play-again-button");
+    const playAgain = this.createPlayAgainButton();
 
     wrapper.setAttribute("id", "win-or-tie-box-text");
     wrapper.append(player, winOrTieContainer, playAgain);
@@ -406,7 +476,7 @@ export default class UIManager {
     // Player text
     const player = document.createElement("p");
     player.setAttribute("id", "turn-box-player");
-    player.classList.add("turn-box-player");
+    player.classList.add("game-box-player");
 
     // Time text
     const turnTimeContainer = document.createElement("span");
@@ -425,11 +495,58 @@ export default class UIManager {
     const winOrTieBoxText = document.getElementById("win-or-tie-box-text");
     if (winOrTieBoxText) winOrTieBoxText.remove();
 
+    const timeOverText = document.getElementById("time-over-box-text");
+    if (timeOverText) timeOverText.remove();
+
     const turnBoxText = this.createTurnBoxText();
     const gameBox = document.getElementById("game-box");
-    gameBox.classList.remove("win-box", "tie-box");
+    gameBox.classList.remove("win-box", "tie-box", "time-over-box");
     gameBox.classList.add("turn-box");
     gameBox.appendChild(turnBoxText);
+  }
+
+  /**
+   * Creates the content for the Time Over game box.
+   * @returns A wrapper with the created content.
+   */
+  createTimeOverContent() {
+    const content = document.createElement("div");
+
+    // Time Over text
+    const timeOver = document.createElement("p");
+    const timeOverText = document.createTextNode("Time over!");
+    timeOver.appendChild(timeOverText);
+    timeOver.classList.add("game-box-state", "small");
+
+    // Player X wins text
+    const playerWinner = this.utils.getOppositePlayerWithTurn();
+    const playerWins = document.createElement("p");
+    const playerWinsText = document.createTextNode(
+      `Player ${playerWinner} wins`
+    );
+    playerWins.appendChild(playerWinsText);
+    playerWins.classList.add("game-box-player");
+
+    // Play again button
+    const playAgain = this.createPlayAgainButton();
+
+    content.setAttribute("id", "time-over-box-text");
+    content.append(timeOver, playerWins, playAgain);
+    return content;
+  }
+
+  /**
+   * Displays the Time Over game box on screen.
+   */
+  showTimeOverBox() {
+    const turnBoxText = document.getElementById("turn-box-text");
+    if (turnBoxText) turnBoxText.remove();
+
+    const timeOverContent = this.createTimeOverContent();
+    const gameBox = document.getElementById("game-box");
+    gameBox.classList.remove("turn-box", "player-1", "player-2");
+    gameBox.classList.add("time-over-box");
+    gameBox.appendChild(timeOverContent);
   }
 
   /**
@@ -453,7 +570,29 @@ export default class UIManager {
   }
 
   /**
-   * Reset the current player turn and time on screen
+   * Changes the background of the turn box depending of the player with the turn.
+   * @param {string} player - The name of the player with the current turn.
+   */
+  changeTurnBoxColor(player) {
+    if (!player) {
+      throw new Error("A player is needed to change the turn box color.");
+    }
+
+    const turnBox = document.getElementsByClassName("turn-box")[0];
+    turnBox.classList.remove("player-1", "player-2");
+    turnBox.classList.add("player-" + player);
+  }
+
+  /**
+   * Resets the turn box color.
+   */
+  resetTurnBoxColor() {
+    const turnBox = document.getElementsByClassName("turn-box")[0];
+    turnBox.classList.remove("player-1", "player-2");
+  }
+
+  /**
+   * Resets the current player turn and time on screen
    */
   resetTurn() {
     this.updateTurnPlayer(GameManager.getInstance().playerWithTurn);

@@ -1,3 +1,5 @@
+import GameManager from "./GameManager.js";
+
 const initialLastDiscPositionY = 6;
 let lastDiscPositionY = initialLastDiscPositionY;
 let currentPlayerWithTurn;
@@ -15,25 +17,33 @@ export default class Utils {
   siblingsNeededToWin = 3;
 
   /**
-   * Gets all discs from the board.
-   * @returns All discs found in the board.
+   * Gets all discs from the game.
+   * @returns All discs found in the game.
    */
   getAllDiscs() {
     const discs = document.getElementsByClassName("disc");
     return [...discs];
   }
 
+  /**
+   * Checks if some disc is filled in the game.
+   * @returns Whether a disc is filled or not in the game.
+   */
   someDiscFilled() {
     const discs = this.getAllDiscs();
     return discs.some((disc) => disc.classList.contains("filled"));
   }
 
+  /**
+   * Checks if all discs in game are filled.
+   * @returns Whether all discs in game are filled or not.
+   */
   allDiscFilled() {
     const discs = this.getAllDiscs();
     const someDiscUnfilled = discs.some(
       (disc) => !disc.classList.contains("filled")
     );
-    return !someDiscUnfilled;
+    return !someDiscUnfilled; // some disc unfilled === true ? false (not all discs are filled) : true (no disc unfilled, all discs filled)
   }
 
   /**
@@ -185,5 +195,18 @@ export default class Utils {
       allSibling.push(sibling);
     }
     return allSibling;
+  }
+
+  /**
+   * Gets the opposite player to the one with the current game turn.
+   * @returns The player opposite to the one with the current turn.
+   */
+  getOppositePlayerWithTurn() {
+    const players = GameManager.getInstance().players;
+    const opposite =
+      GameManager.getInstance().playerWithTurn === players.one
+        ? players.two
+        : players.one;
+    return opposite;
   }
 }

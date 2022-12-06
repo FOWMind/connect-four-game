@@ -20,7 +20,7 @@ export default class GameManager {
   };
   initialTurn = this.players.one;
   playerWithTurn = this.initialTurn;
-  timePerTurn = 30; // seconds
+  timePerTurn = 15; // seconds
   gameStarted = false;
 
   constructor() {
@@ -39,16 +39,17 @@ export default class GameManager {
   }
 
   /**
-   * Reset the current turn state including time
+   * Resets the current turn state including time
    */
   resetTurn() {
     this.playerWithTurn = this.initialTurn;
     this.clearTimers();
     this.uiManager.resetTurn();
+    this.uiManager.resetTurnBoxColor();
   }
 
   /**
-   * Stop the current game session.
+   * Stops the current game session.
    */
   stopGame() {
     const someDiscFilled = this.utils.someDiscFilled();
@@ -69,10 +70,9 @@ export default class GameManager {
    * Changes the current turn to opponent and show it on screen.
    */
   changeTurnToOpponent() {
-    this.playerWithTurn =
-      this.playerWithTurn === this.players.one
-        ? this.players.two
-        : this.players.one;
+    const opponent = this.utils.getOppositePlayerWithTurn();
+    this.playerWithTurn = opponent;
+    this.uiManager.changeTurnBoxColor(opponent);
     this.uiManager.resetTurn();
   }
 
@@ -93,7 +93,7 @@ export default class GameManager {
    */
   changeTurnAfterTimeout() {
     this.currentTurnTimeout = setTimeout(() => {
-      this.handleTurnChange();
+      this.setTimeOver();
     }, this.timePerTurn * 1000);
   }
 
@@ -128,6 +128,15 @@ export default class GameManager {
   }
 
   /**
+   * Restarts the current game session.
+   */
+  restartGame() {
+    this.stopGame();
+    this.uiManager.setRestartButtonDisabled(true);
+    this.uiManager.closeModal();
+  }
+
+  /**
    * Sets the game over to true and clear the timers
    */
   setGameOver() {
@@ -136,12 +145,21 @@ export default class GameManager {
   }
 
   /**
+   * Sets the game state to Time Over.
+   */
+  setTimeOver() {
+    this.setGameOver();
+    this.audioManager.playSound("timeOver");
+    this.uiManager.showTimeOverBox();
+  }
+
+  /**
    * Sets the game state to tie.
    */
   setTie() {
     this.setGameOver();
-    this.uiManager.showTieBox();
     this.audioManager.playSound("win");
+    this.uiManager.showTieBox();
   }
 
   /**

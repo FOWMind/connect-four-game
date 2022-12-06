@@ -18,14 +18,13 @@ export default class EventManager {
     this.audioManager = AudioManager.getInstance();
     this.gameManager = GameManager.getInstance();
     this.utils = Utils.getInstance();
+    this.clickedDisc;
   }
 
   /**
    * Manage what happens with each event in the application.
    */
   handleEvents() {
-    let clickedDisc;
-
     document.addEventListener("click", ({ target }) => {
       if (target.getAttribute("disabled")) return;
 
@@ -44,6 +43,7 @@ export default class EventManager {
 
       // General
       const closeModalButton = document.getElementById("close-modal");
+      const targetAction = target.getAttribute("action");
 
       if (isClickSound) {
         this.audioManager.playSound("click");
@@ -55,20 +55,22 @@ export default class EventManager {
         // return console.log("play vs cpu");
         return;
       } else if (target === playPlayerButton) {
-        this.uiManager.showGame("player");
+        this.handlePlayPlayerClick();
       } else if (target === gameRulesButton) {
-        this.uiManager.showRules();
+        this.handleGameRulesClick();
       } else if (target === menuButton) {
+        this.clickedDisc = null;
         this.uiManager.showMenu();
-      } else if (target === restartButton || target === playAgainButton) {
-        if (restartButton) restartButton.setAttribute("disabled", "");
-        this.gameManager.stopGame();
+      } else if (target === restartButton) {
+        this.handleRestartButtonClick();
+      } else if (target === playAgainButton) {
+        this.gameManager.restartGame();
+      } else if (targetAction === "restart-game") {
+        this.gameManager.restartGame();
       } else if (isClickedDisc) {
-        clickedDisc = target;
-        if (restartButton) restartButton.removeAttribute("disabled");
         this.handleDiscClick(target);
       } else if (target === closeModalButton) {
-        this.uiManager.closeModal();
+        this.handleCloseModalClick();
       }
     });
 
@@ -81,9 +83,43 @@ export default class EventManager {
     });
 
     window.addEventListener("resize", () => {
-      if (!clickedDisc) return;
-      this.uiManager.moveArrow(clickedDisc);
+      if (!this.clickedDisc) return;
+      this.uiManager.moveArrow(this.clickedDisc);
     });
+  }
+
+  /**
+   * Handles what happens when the user clicks the Restart button.
+   */
+  handleRestartButtonClick() {
+    if (this.gameManager.gameOver) {
+      this.gameManager.restartGame();
+    } else {
+      this.uiManager.showConfirmDialog("Are you sure you want to restart?");
+    }
+  }
+
+  /**
+   * Handles what happens when the user clicks the Play vs Player button.
+   */
+  handlePlayPlayerClick() {
+    this.audioManager.playSound("start");
+    this.uiManager.showGame("player");
+  }
+
+  /**
+   * Handles what happens when the user clicks the Game Rules button.
+   */
+  handleGameRulesClick() {
+    this.audioManager.playSound("openModal");
+    this.uiManager.showRules();
+  }
+
+  /**
+   * Handles what happen when the user clicks the Close Modal button.
+   */
+  handleCloseModalClick() {
+    this.uiManager.closeModal();
   }
 
   /**
@@ -93,6 +129,8 @@ export default class EventManager {
   handleDiscClick(clickedDisc) {
     if (this.gameManager.gameOver) return;
     this.gameManager.gameStarted = true;
+    this.clickedDisc = clickedDisc;
+    this.uiManager.setRestartButtonDisabled(false);
 
     const lastAvailableDisc = this.utils.handleLastAvailableDisc(clickedDisc);
     if (!lastAvailableDisc) return;
