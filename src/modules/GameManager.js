@@ -20,7 +20,7 @@ export default class GameManager {
   };
   initialTurn = this.players.one;
   playerWithTurn = this.initialTurn;
-  timePerTurn = 30; // seconds
+  timePerTurn = 15; // seconds
   gameStarted = false;
 
   constructor() {
@@ -96,7 +96,7 @@ export default class GameManager {
    */
   changeTurnAfterTimeout() {
     this.currentTurnTimeout = setTimeout(() => {
-      this.handleTurnChange();
+      this.setTimeOver();
     }, this.timePerTurn * 1000);
   }
 
@@ -139,12 +139,21 @@ export default class GameManager {
   }
 
   /**
+   * Sets the game state to Time Over.
+   */
+  setTimeOver() {
+    this.setGameOver();
+    this.audioManager.playSound("timeOver");
+    this.uiManager.showTimeOverBox();
+  }
+
+  /**
    * Sets the game state to tie.
    */
   setTie() {
     this.setGameOver();
-    this.uiManager.showTieBox();
     this.audioManager.playSound("win");
+    this.uiManager.showTieBox();
   }
 
   /**

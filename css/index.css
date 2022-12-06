@@ -286,8 +286,10 @@ img {
 
 .game-box {
   padding: 1rem 2rem;
+  max-width: max-content;
   margin: 0 auto;
   margin-top: -1rem;
+  background-color: #fff;
   color: #fff;
   text-align: center;
   border-radius: 15px;
@@ -296,44 +298,54 @@ img {
   position: relative;
   z-index: 5;
 }
+.game-box-player, .game-box-state {
+  word-break: break-all;
+  font-weight: 600;
+  color: #000;
+  text-transform: uppercase;
+}
+.game-box-player {
+  font-size: 1.25rem;
+}
+.game-box-state {
+  font-size: 4rem;
+}
+.game-box-state.small {
+  font-size: 3rem;
+}
+.game-box.time-over-box {
+  background-color: #fff;
+}
+.game-box.time-over-box .game-box-player,
+.game-box.time-over-box .game-box-state {
+  color: #000;
+}
+.game-box.time-over-box .game-box-player {
+  margin-bottom: 0.5rem;
+}
 .game-box.turn-box {
   background-color: #fd6486;
-  max-width: 14rem;
 }
 .game-box.turn-box.player-1 {
   background-color: #fd6486;
 }
 .game-box.turn-box.player-2 {
   background-color: #ffce67;
+}
+.game-box.turn-box.player-2 .game-box-player,
+.game-box.turn-box.player-2 .turn-box-time {
   color: #000;
 }
-.game-box.turn-box .turn-box-player,
+.game-box.turn-box .game-box-player,
 .game-box.turn-box .turn-box-time {
-  font-weight: 600;
-}
-.game-box.turn-box .turn-box-player {
-  font-size: 1.25rem;
+  color: #fff;
 }
 .game-box.turn-box .turn-box-time {
   font-size: 4rem;
+  font-weight: 600;
 }
 .game-box.win-box, .game-box.tie-box {
   background-color: #fff;
-  max-width: 16rem;
-  max-width: max-content;
-}
-.game-box.win-box .win-or-tie-box-player,
-.game-box.win-box .win-or-tie-box-state, .game-box.tie-box .win-or-tie-box-player,
-.game-box.tie-box .win-or-tie-box-state {
-  color: #000;
-  font-weight: 600;
-}
-.game-box.win-box .win-or-tie-box-player, .game-box.tie-box .win-or-tie-box-player {
-  font-size: 1.25rem;
-}
-.game-box.win-box .win-or-tie-box-state, .game-box.tie-box .win-or-tie-box-state {
-  font-size: 4rem;
-  word-break: break-all;
 }
 
 .modal {

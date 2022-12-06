@@ -387,8 +387,10 @@ img {
 
 .game-box {
   padding: 1rem 2rem;
+  max-width: max-content;
   margin: 0 auto;
   margin-top: -1rem;
+  background-color: $primaryBg;
   color: $secondaryText;
   text-align: center;
   border-radius: 15px;
@@ -397,9 +399,41 @@ img {
   position: relative;
   z-index: 5;
 
+  &-player,
+  &-state {
+    word-break: break-all;
+    font-weight: $fwMedium;
+    color: $primaryText;
+    text-transform: uppercase;
+  }
+
+  &-player {
+    font-size: 1.25rem;
+  }
+
+  &-state {
+    font-size: 4rem;
+
+    &.small {
+      font-size: 3rem;
+    }
+  }
+
+  &.time-over-box {
+    background-color: $primaryBg;
+
+    .game-box-player,
+    .game-box-state {
+      color: $primaryText;
+    }
+
+    .game-box-player {
+      margin-bottom: 0.5rem;
+    }
+  }
+
   &.turn-box {
     background-color: $red;
-    max-width: 14rem;
 
     &.player-1 {
       background-color: $red;
@@ -407,43 +441,27 @@ img {
 
     &.player-2 {
       background-color: $yellow;
-      color: $primaryText;
+
+      .game-box-player,
+      .turn-box-time {
+        color: $primaryText;
+      }
     }
 
-    .turn-box-player,
+    .game-box-player,
     .turn-box-time {
-      font-weight: $fwMedium;
-    }
-
-    .turn-box-player {
-      font-size: 1.25rem;
+      color: $secondaryText;
     }
 
     .turn-box-time {
       font-size: 4rem;
+      font-weight: $fwMedium;
     }
   }
 
   &.win-box,
   &.tie-box {
     background-color: $primaryBg;
-    max-width: 16rem;
-    max-width: max-content;
-
-    .win-or-tie-box-player,
-    .win-or-tie-box-state {
-      color: $primaryText;
-      font-weight: $fwMedium;
-    }
-
-    .win-or-tie-box-player {
-      font-size: 1.25rem;
-    }
-
-    .win-or-tie-box-state {
-      font-size: 4rem;
-      word-break: break-all;
-    }
   }
 }
 

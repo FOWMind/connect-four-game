@@ -325,6 +325,16 @@ export default class UIManager {
   }
 
   /**
+   * Creates a button with the text "Play Again"
+   * @returns The created Play Again button.
+   */
+  createPlayAgainButton() {
+    const playAgain = this.createGameButton("Play again");
+    playAgain.setAttribute("id", "play-again-button");
+    return playAgain;
+  }
+
+  /**
    * Creates the text for the win or tie box.
    * @returns The text wrapper element.
    */
@@ -335,7 +345,7 @@ export default class UIManager {
     const player = document.createElement("span");
     const playerWinner = GameManager.getInstance().playerWithTurn;
     const playerText = document.createTextNode(`Player ${playerWinner}`);
-    player.classList.add("win-or-tie-box-player");
+    player.classList.add("game-box-player");
     player.appendChild(playerText);
 
     // Win or tie text
@@ -343,12 +353,11 @@ export default class UIManager {
     const winOrTieText = document.createTextNode(
       winOrTie === "win" ? "Wins" : "Tie"
     );
-    winOrTieContainer.classList.add("win-or-tie-box-state");
+    winOrTieContainer.classList.add("game-box-state");
     winOrTieContainer.appendChild(winOrTieText);
 
     // Play again button
-    const playAgain = this.createGameButton("Play again");
-    playAgain.setAttribute("id", "play-again-button");
+    const playAgain = this.createPlayAgainButton();
 
     wrapper.setAttribute("id", "win-or-tie-box-text");
     wrapper.append(player, winOrTieContainer, playAgain);
@@ -406,7 +415,7 @@ export default class UIManager {
     // Player text
     const player = document.createElement("p");
     player.setAttribute("id", "turn-box-player");
-    player.classList.add("turn-box-player");
+    player.classList.add("game-box-player");
 
     // Time text
     const turnTimeContainer = document.createElement("span");
@@ -425,11 +434,58 @@ export default class UIManager {
     const winOrTieBoxText = document.getElementById("win-or-tie-box-text");
     if (winOrTieBoxText) winOrTieBoxText.remove();
 
+    const timeOverText = document.getElementById("time-over-box-text");
+    if (timeOverText) timeOverText.remove();
+
     const turnBoxText = this.createTurnBoxText();
     const gameBox = document.getElementById("game-box");
-    gameBox.classList.remove("win-box", "tie-box");
+    gameBox.classList.remove("win-box", "tie-box", "time-over-box");
     gameBox.classList.add("turn-box");
     gameBox.appendChild(turnBoxText);
+  }
+
+  /**
+   * Creates the content for the Time Over game box.
+   * @returns A wrapper with the created content.
+   */
+  createTimeOverContent() {
+    const content = document.createElement("div");
+
+    // Time Over text
+    const timeOver = document.createElement("p");
+    const timeOverText = document.createTextNode("Time over!");
+    timeOver.appendChild(timeOverText);
+    timeOver.classList.add("game-box-state", "small");
+
+    // Player X wins text
+    const playerWinner = GameManager.getInstance().playerWithTurn;
+    const playerWins = document.createElement("p");
+    const playerWinsText = document.createTextNode(
+      `Player ${playerWinner} wins`
+    );
+    playerWins.appendChild(playerWinsText);
+    playerWins.classList.add("game-box-player");
+
+    // Play again button
+    const playAgain = this.createPlayAgainButton();
+
+    content.setAttribute("id", "time-over-box-text");
+    content.append(timeOver, playerWins, playAgain);
+    return content;
+  }
+
+  /**
+   * Displays the Time Over game box on screen.
+   */
+  showTimeOverBox() {
+    const turnBoxText = document.getElementById("turn-box-text");
+    if (turnBoxText) turnBoxText.remove();
+
+    const timeOverContent = this.createTimeOverContent();
+    const gameBox = document.getElementById("game-box");
+    gameBox.classList.remove("turn-box", "player-1", "player-2");
+    gameBox.classList.add("time-over-box");
+    gameBox.appendChild(timeOverContent);
   }
 
   /**
