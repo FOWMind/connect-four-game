@@ -16,6 +16,8 @@ export default class AudioManager {
     hover: this.soundPath + "hover.mp3",
     win: this.soundPath + "win.mp3",
     timeOver: this.soundPath + "time-over.mp3",
+    openModal: this.soundPath + "pop-in.mp3",
+    closeModal: this.soundPath + "pop-out.mp3",
   };
 
   /**

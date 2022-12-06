@@ -1,3 +1,4 @@
+import AudioManager from "./AudioManager.js";
 import GameManager from "./GameManager.js";
 import Utils from "./Utils.js";
 
@@ -77,21 +78,16 @@ export default class UIManager {
   /**
    * Create a menu button.
    * @param {string} text - Text to use in the button.
-   * @param {string} sound - The sound name to be used for the button.
    * @param {string} icon - The icon image path to use in the button.
-   * @returns The button element.
+   * @returns The created button element.
    */
-  createMenuButton(text, sound, icon) {
+  createMenuButton(text, icon) {
     if (!text) {
       throw new Error("a text must be provided for the button.");
     }
     const button = document.createElement("button");
     const buttonText = document.createTextNode(text);
-    button.classList.add(
-      "menu-button",
-      sound === "click" ? "click-sound" : "start-sound",
-      "hover-sound"
-    );
+    button.classList.add("menu-button", "hover-sound");
     button.appendChild(buttonText);
 
     if (icon) {
@@ -107,21 +103,19 @@ export default class UIManager {
 
   /**
    * Create all menu buttons.
-   * @returns The button wrapper element.
+   * @returns The created button wrapper element.
    */
   createMenuButtons() {
     const wrapper = document.createElement("div");
     const playCPU = this.createMenuButton(
       "Play vs CPU",
-      null,
       "./src/images/play-vs-cpu.svg"
     );
     const playPlayer = this.createMenuButton(
       "Play vs Player",
-      null,
       "./src/images/play-vs-player.svg"
     );
-    const gameRules = this.createMenuButton("Game rules", "click");
+    const gameRules = this.createMenuButton("Game rules");
 
     wrapper.classList.add("menu-buttons");
     playCPU.classList.add("primary");
@@ -181,6 +175,7 @@ export default class UIManager {
   closeModal() {
     const modal = document.getElementById("modal");
     modal.classList.add("closing");
+    AudioManager.getInstance().playSound("closeModal");
 
     const removeAfter = setTimeout(() => {
       modal.remove();

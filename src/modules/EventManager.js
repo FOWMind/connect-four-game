@@ -55,9 +55,9 @@ export default class EventManager {
         // return console.log("play vs cpu");
         return;
       } else if (target === playPlayerButton) {
-        this.uiManager.showGame("player");
+        this.handlePlayPlayerClick();
       } else if (target === gameRulesButton) {
-        this.uiManager.showRules();
+        this.handleGameRulesClick();
       } else if (target === menuButton) {
         clickedDisc = null;
         this.uiManager.showMenu();
@@ -69,7 +69,7 @@ export default class EventManager {
         if (restartButton) restartButton.removeAttribute("disabled");
         this.handleDiscClick(target);
       } else if (target === closeModalButton) {
-        this.uiManager.closeModal();
+        this.handleCloseModalClick();
       }
     });
 
@@ -85,6 +85,29 @@ export default class EventManager {
       if (!clickedDisc) return;
       this.uiManager.moveArrow(clickedDisc);
     });
+  }
+
+  /**
+   * Handles what happens when the user clicks the Play vs Player button
+   */
+  handlePlayPlayerClick() {
+    this.audioManager.playSound("start");
+    this.uiManager.showGame("player");
+  }
+
+  /**
+   * Handles what happens when the user clicks the Game Rules button
+   */
+  handleGameRulesClick() {
+    this.audioManager.playSound("openModal");
+    this.uiManager.showRules();
+  }
+
+  /**
+   * Handles what happen when the user clicks the Close Modal button
+   */
+  handleCloseModalClick() {
+    this.uiManager.closeModal();
   }
 
   /**

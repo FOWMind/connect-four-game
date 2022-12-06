@@ -9,7 +9,7 @@ import EventManager from "./src/modules/EventManager.js";
  * - [x] Add favicon.
  * - [x] When the turn time ends, the game must show a Time Over game box.
  * - [x] The user cannot click the menu button if they clicks the button icon.
- * - Add sound when a modal is opened.
+ * - [x] Add sound when a modal is opened.
  * - Add a confirm dialog when press restart if the game is not over.
  * - Find a bug where the four-in-row check doesn't work correctly.
  * and the game continue even with a four-in-row (it occurs when I try to get a tie).
