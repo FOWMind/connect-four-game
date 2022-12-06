@@ -39,16 +39,17 @@ export default class GameManager {
   }
 
   /**
-   * Reset the current turn state including time
+   * Resets the current turn state including time
    */
   resetTurn() {
     this.playerWithTurn = this.initialTurn;
     this.clearTimers();
     this.uiManager.resetTurn();
+    this.uiManager.resetTurnBoxColor();
   }
 
   /**
-   * Stop the current game session.
+   * Stops the current game session.
    */
   stopGame() {
     const someDiscFilled = this.utils.someDiscFilled();
@@ -69,10 +70,12 @@ export default class GameManager {
    * Changes the current turn to opponent and show it on screen.
    */
   changeTurnToOpponent() {
-    this.playerWithTurn =
+    const opponent =
       this.playerWithTurn === this.players.one
         ? this.players.two
         : this.players.one;
+    this.playerWithTurn = opponent;
+    this.uiManager.changeTurnBoxColor(opponent);
     this.uiManager.resetTurn();
   }
 

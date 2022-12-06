@@ -453,7 +453,29 @@ export default class UIManager {
   }
 
   /**
-   * Reset the current player turn and time on screen
+   * Changes the background of the turn box depending of the player with the turn.
+   * @param {string} player - The name of the player with the current turn.
+   */
+  changeTurnBoxColor(player) {
+    if (!player) {
+      throw new Error("A player is needed to change the turn box color.");
+    }
+
+    const turnBox = document.getElementsByClassName("turn-box")[0];
+    turnBox.classList.remove("player-1", "player-2");
+    turnBox.classList.add("player-" + player);
+  }
+
+  /**
+   * Resets the turn box color.
+   */
+  resetTurnBoxColor() {
+    const turnBox = document.getElementsByClassName("turn-box")[0];
+    turnBox.classList.remove("player-1", "player-2");
+  }
+
+  /**
+   * Resets the current player turn and time on screen
    */
   resetTurn() {
     this.updateTurnPlayer(GameManager.getInstance().playerWithTurn);

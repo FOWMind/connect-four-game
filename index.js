@@ -4,7 +4,7 @@ import EventManager from "./src/modules/EventManager.js";
 /**
  * TODO:
  * - [x] Add icons to the menu buttons.
- * - Change game box color when turn changes.
+ * - [X] Change game box color when turn changes.
  * - [x] Show the game rules when user clicks Game rules button.
  * - Add favicon.
  * - When the turn time ends, the game must show a Lose game box.

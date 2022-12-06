@@ -394,12 +394,20 @@ img {
   z-index: 5;
 
   &.turn-box {
-    background-color: $discSelectedBgPlayerOne;
+    background-color: $red;
     max-width: 14rem;
+
+    &.player-1 {
+      background-color: $red;
+    }
+
+    &.player-2 {
+      background-color: $yellow;
+      color: $primaryText;
+    }
 
     .turn-box-player,
     .turn-box-time {
-      color: $secondaryText;
       font-weight: $fwMedium;
     }
 

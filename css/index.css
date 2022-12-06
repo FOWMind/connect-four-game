@@ -298,9 +298,15 @@ img {
   background-color: #fd6486;
   max-width: 14rem;
 }
+.game-box.turn-box.player-1 {
+  background-color: #fd6486;
+}
+.game-box.turn-box.player-2 {
+  background-color: #ffce67;
+  color: #000;
+}
 .game-box.turn-box .turn-box-player,
 .game-box.turn-box .turn-box-time {
-  color: #fff;
   font-weight: 600;
 }
 .game-box.turn-box .turn-box-player {
