@@ -140,7 +140,7 @@ img {
   font-size: 1.5rem;
   color: $primaryText;
   border-radius: 15px;
-  border: 3px solid $secondaryBg;
+  border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
   position: relative;
 
@@ -245,7 +245,7 @@ img {
   border-radius: 15px;
   display: inline-block;
   background-color: $primaryBg;
-  border: 3px solid $secondaryBg;
+  border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
   position: relative;
 
@@ -257,17 +257,21 @@ img {
     width: $playerSize;
     height: $playerSize;
 
+    &,
+    &::before {
+      border-radius: 50%;
+    }
+
     &::before {
       content: "";
       position: absolute;
-      bottom: -10%;
+      bottom: -4px;
       left: 50%;
       z-index: 1;
       transform: translateX(-50%);
       width: 100%;
       height: 100%;
       background-color: $secondaryBg;
-      border-radius: 50%;
     }
 
     &-img {
@@ -303,7 +307,7 @@ img {
   margin-top: 2rem;
   border-radius: 15px;
   background-color: $discWrapperBg;
-  border: 3px solid $secondaryBg;
+  border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
 }
 
@@ -321,7 +325,7 @@ img {
   height: $discSize;
   margin-bottom: $discMargin;
   background-color: $secondaryBg;
-  border: 3px solid $secondaryBg;
+  border: 4px solid $secondaryBg;
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -388,7 +392,7 @@ img {
   color: $secondaryText;
   text-align: center;
   border-radius: 15px;
-  border: 3px solid $secondaryBg;
+  border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
   position: relative;
   z-index: 5;
@@ -446,7 +450,7 @@ img {
 .modal {
   padding: 2rem;
   background-color: $primaryBg;
-  border: 3px solid $secondaryBg;
+  border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
   width: 90vw;
   max-width: 50ch;
