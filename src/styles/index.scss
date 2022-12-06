@@ -25,13 +25,15 @@ $primaryText: #000;
 $primaryTextSoft: #7b7b7b;
 $secondaryBg: #000;
 $secondaryText: #fff;
+@debug secondaryBg soft color.adjust($secondaryBg, $lightness: 30%);
+$secondaryBgSoft: #4d4d4d;
 $tertiaryText: $purple;
 
 $bgClr: $purple;
 
 $buttonBg: #5b2cd5;
 $buttonBgHover: #3f1e97;
-@debug color.adjust($buttonBg, $lightness: -15%);
+@debug buttonBg hover color.adjust($buttonBg, $lightness: -15%);
 $buttonClr: $secondaryText;
 
 // Player
@@ -70,6 +72,31 @@ $discSelectedShadowClrPlayerTwo: $yellowDark;
   to {
     transform: translate(-50%, -50%) scale(0);
   }
+}
+
+/* width */
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+  background-color: $primaryBg;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+  background: none;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+  background-color: $secondaryBg;
+  border: 2px solid $primaryBg;
+  border-radius: 50px;
+  background-clip: content-box;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+  background-color: $secondaryBgSoft;
 }
 
 * {
