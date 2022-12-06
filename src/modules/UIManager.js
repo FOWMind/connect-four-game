@@ -170,10 +170,26 @@ export default class UIManager {
   }
 
   /**
+   * Sets the disabled attribute or remove it from the restart button depending on value.
+   * @param {boolean} value - The value that will be used to disable or enable the restart button. Must be true or false
+   */
+  setRestartButtonDisabled(value) {
+    const restartButton = document.getElementById("restart-button");
+    if (!restartButton) return;
+
+    if (value === true) {
+      restartButton.setAttribute("disabled", "");
+    } else if (value === false) {
+      restartButton.removeAttribute("disabled");
+    }
+  }
+
+  /**
    * Closes the one opened modal.
    */
   closeModal() {
     const modal = document.getElementById("modal");
+    if (!modal) return;
     modal.classList.add("closing");
     AudioManager.getInstance().playSound("closeModal");
 
@@ -186,9 +202,10 @@ export default class UIManager {
   /**
    * Creates a modal with the given content.
    * @param {HTMLElement} content - The HTML content that the modal will contain.
+   * @param {string} type - The type of modal to create (example: "confirmDialog").
    * @returns The modal element created.
    */
-  createModal(content) {
+  createModal(content, type, actionName) {
     if (!content) {
       throw new Error("Content must be provided to create a modal.");
     }
@@ -197,22 +214,36 @@ export default class UIManager {
     modal.setAttribute("id", "modal");
     modal.classList.add("modal");
 
-    const modalCloseIcon = new Image();
-    modalCloseIcon.setAttribute("src", "./src/images/check.svg");
-    modalCloseIcon.setAttribute("alt", "Close modal");
-    modalCloseIcon.classList.add("modal-close-img");
-
-    const modalCloseButton = document.createElement("button");
-    modalCloseButton.setAttribute("id", "close-modal");
-    modalCloseButton.setAttribute("title", "Close modal");
-    modalCloseButton.classList.add("modal-close");
-    modalCloseButton.appendChild(modalCloseIcon);
-
     const modalContent = document.createElement("div");
     modalContent.classList.add("modal-content");
     modalContent.appendChild(content);
+    modal.append(modalContent);
 
-    modal.append(modalContent, modalCloseButton);
+    if (type === "confirmDialog" && actionName) {
+      const acceptButton = this.createGameButton("Yes");
+      acceptButton.classList.add("accept-button");
+      acceptButton.setAttribute("action", actionName);
+
+      const rejectButton = this.createGameButton("No");
+      rejectButton.classList.add("reject-button");
+      rejectButton.setAttribute("id", "close-modal");
+
+      modal.append(acceptButton, rejectButton);
+      modal.classList.add("auto-size", "confirm-dialog");
+    } else {
+      const modalCloseIcon = new Image();
+      modalCloseIcon.setAttribute("src", "./src/images/check.svg");
+      modalCloseIcon.setAttribute("alt", "Close modal");
+      modalCloseIcon.classList.add("modal-close-img");
+
+      const modalCloseButton = document.createElement("button");
+      modalCloseButton.setAttribute("id", "close-modal");
+      modalCloseButton.setAttribute("title", "Close modal");
+      modalCloseButton.classList.add("modal-close");
+      modalCloseButton.appendChild(modalCloseIcon);
+      modal.appendChild(modalCloseButton);
+    }
+
     return modal;
   }
 
@@ -270,6 +301,41 @@ export default class UIManager {
     });
 
     return list;
+  }
+
+  /**
+   * Creates a confirm dialog in form of modal with the provided text.
+   * @param {string} text - The text to use in the confirm dialog.
+   * @returns The created confirm dialog modal element.
+   */
+  createConfirmDialog(text) {
+    if (!text) {
+      throw new Error(
+        "Text must be provided in order to create a confirm dialog."
+      );
+    }
+
+    const dialogTextContainer = document.createElement("p");
+    const dialogText = document.createTextNode(text);
+    dialogTextContainer.appendChild(dialogText);
+    dialogTextContainer.classList.add("confirm-dialog-text");
+
+    const dialogModal = this.createModal(
+      dialogTextContainer,
+      "confirmDialog",
+      "restart-game"
+    );
+    return dialogModal;
+  }
+
+  /**
+   * Displays a confirm dialog modal with the provided text on screen.
+   * @param {string} text - The text to use in the confirm dialog.
+   */
+  showConfirmDialog(text) {
+    const dialog = this.createConfirmDialog(text);
+    AudioManager.getInstance().playSound("openModal");
+    root.appendChild(dialog);
   }
 
   /**

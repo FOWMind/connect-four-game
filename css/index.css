@@ -388,10 +388,37 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 100;
   animation: popupModal 0.5s ease-in-out forwards;
 }
 .modal.closing {
   animation: hideModal 0.35s ease-in-out forwards;
+}
+.modal.auto-size {
+  height: auto;
+  max-height: initial;
+}
+.modal.confirm-dialog .confirm-dialog-text {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+.modal.confirm-dialog .accept-button,
+.modal.confirm-dialog .reject-button {
+  margin-right: 0.5rem;
+}
+.modal.confirm-dialog .accept-button {
+  background-color: #000;
+  color: #fff;
+}
+.modal.confirm-dialog .accept-button:hover {
+  background-color: #4d4d4d;
+}
+.modal.confirm-dialog .reject-button {
+  background-color: #fd6486;
+}
+.modal.confirm-dialog .reject-button:hover {
+  background-color: #7e3243;
 }
 .modal-content {
   width: 100%;

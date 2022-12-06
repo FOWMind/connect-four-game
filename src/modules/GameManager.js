@@ -128,6 +128,15 @@ export default class GameManager {
   }
 
   /**
+   * Restarts the current game session.
+   */
+  restartGame() {
+    this.stopGame();
+    this.uiManager.setRestartButtonDisabled(true);
+    this.uiManager.closeModal();
+  }
+
+  /**
    * Sets the game over to true and clear the timers
    */
   setGameOver() {

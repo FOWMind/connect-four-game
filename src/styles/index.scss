@@ -507,10 +507,46 @@ img {
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
+  z-index: 100;
   animation: popupModal $modalPopupAnimationTime ease-in-out forwards;
 
   &.closing {
     animation: hideModal $modalHideAnimationTime ease-in-out forwards;
+  }
+
+  &.auto-size {
+    height: auto;
+    max-height: initial;
+  }
+
+  &.confirm-dialog {
+    .confirm-dialog-text {
+      font-size: 1.25rem;
+      font-weight: $fwMedium;
+      margin-bottom: 1rem;
+    }
+
+    .accept-button,
+    .reject-button {
+      margin-right: 0.5rem;
+    }
+
+    .accept-button {
+      background-color: $secondaryBg;
+      color: $secondaryText;
+
+      &:hover {
+        background-color: $secondaryBgSoft;
+      }
+    }
+
+    .reject-button {
+      background-color: $red;
+
+      &:hover {
+        background-color: $redDark;
+      }
+    }
   }
 
   &-content {
