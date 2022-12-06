@@ -453,7 +453,7 @@ export default class UIManager {
     timeOver.classList.add("game-box-state", "small");
 
     // Player X wins text
-    const playerWinner = GameManager.getInstance().playerWithTurn;
+    const playerWinner = this.utils.getOppositePlayerWithTurn();
     const playerWins = document.createElement("p");
     const playerWinsText = document.createTextNode(
       `Player ${playerWinner} wins`

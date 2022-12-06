@@ -70,10 +70,7 @@ export default class GameManager {
    * Changes the current turn to opponent and show it on screen.
    */
   changeTurnToOpponent() {
-    const opponent =
-      this.playerWithTurn === this.players.one
-        ? this.players.two
-        : this.players.one;
+    const opponent = this.utils.getOppositePlayerWithTurn();
     this.playerWithTurn = opponent;
     this.uiManager.changeTurnBoxColor(opponent);
     this.uiManager.resetTurn();

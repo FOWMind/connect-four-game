@@ -1,3 +1,5 @@
+import GameManager from "./GameManager.js";
+
 const initialLastDiscPositionY = 6;
 let lastDiscPositionY = initialLastDiscPositionY;
 let currentPlayerWithTurn;
@@ -193,5 +195,18 @@ export default class Utils {
       allSibling.push(sibling);
     }
     return allSibling;
+  }
+
+  /**
+   * Gets the opposite player to the one with the current game turn.
+   * @returns The player opposite to the one with the current turn.
+   */
+  getOppositePlayerWithTurn() {
+    const players = GameManager.getInstance().players;
+    const opposite =
+      GameManager.getInstance().playerWithTurn === players.one
+        ? players.two
+        : players.one;
+    return opposite;
   }
 }
