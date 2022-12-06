@@ -119,6 +119,8 @@ img {
 .menu-button-icon {
   height: 50px;
   margin-left: 1rem;
+  pointer-events: none;
+  user-select: none;
 }
 
 .menu {

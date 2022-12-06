@@ -185,6 +185,8 @@ img {
   &-icon {
     height: $discSize;
     margin-left: 1rem;
+    pointer-events: none;
+    user-select: none;
   }
 }
 
