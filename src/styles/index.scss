@@ -1,11 +1,22 @@
 @use "sass:color";
 @use "sass:math";
 
-$columnsAmount: 7;
+// Screen sizes
+$desktopSize: 1360px;
+
+// Board
+$boardColumns: 7;
+$boardPadding: 10px;
+
+// Discs
 $discSize: 50px;
+$discSizeDesktop: 70px;
 $discMargin: 10px;
-$discWrapperPadding: $discMargin;
+
+// Players
 $playerSize: $discSize * 1.1;
+
+// Modal
 $modalPopupAnimationTime: 0.5s;
 $modalHideAnimationTime: 0.35s;
 $modalCloseSize: 70px;
@@ -14,43 +25,57 @@ $modalCloseSize: 70px;
 $ff: "Anybody", sans-serif;
 $fwMedium: 600;
 
-/* Colors */
+/* ---------- Purple colors ---------- */
 $purple: #7945ff;
+$purpleDark: #5b2cd5;
+$purpleVeryDark: #3f1e97;
+@debug purpleVeryDark color.adjust($purpleDark, $lightness: -15%);
+
+/* ---------- Red colors ---------- */
 $red: #fd6486;
 $redDark: #7e3243;
+
+/* ---------- Yellow colors ---------- */
 $yellow: #ffce67;
 $yellowDark: #7f6633;
 
+/* ---------- Primary colors ---------- */
 $primaryBg: #fff;
 $primaryText: #000;
 $primaryTextSoft: #7b7b7b;
+
+/* ---------- Secondary colors ---------- */
 $secondaryBg: #000;
 $secondaryText: #fff;
-@debug secondaryBg soft color.adjust($secondaryBg, $lightness: 30%);
 $secondaryBgSoft: #4d4d4d;
+@debug secondaryBg soft color.adjust($secondaryBg, $lightness: 30%);
+
+/* ---------- Tertiary colors ---------- */
 $tertiaryText: $purple;
 
+/* ---------- Body colors ---------- */
 $bgClr: $purple;
 
-$buttonBg: #5b2cd5;
-$buttonBgHover: #3f1e97;
-@debug buttonBg hover color.adjust($buttonBg, $lightness: -15%);
+/* ---------- Game button colors ---------- */
+$buttonBg: $purpleDark;
+$buttonBgHover: $purpleVeryDark;
 $buttonClr: $secondaryText;
 
-// Player
+/* ---------- Player colors ---------- */
 $playerOneClr: $red;
 $playerTwoClr: $yellow;
 
-// Disc wrapper
-$discWrapperBg: $primaryBg;
+/* ---------- Board colors ---------- */
+$boardBg: $primaryBg;
 
-// Disc
+/* ---------- Disc colors ---------- */
 $discBg: #7945ff;
 $discSelectedBgPlayerOne: $red;
 $discSelectedShadowClrPlayerOne: $redDark;
 $discSelectedBgPlayerTwo: $yellow;
 $discSelectedShadowClrPlayerTwo: $yellowDark;
 
+/* ---------- Modal animation keyframes ---------- */
 @keyframes popupModal {
   from {
     transform: translate(-50%, -50%) scale(0);
@@ -75,6 +100,7 @@ $discSelectedShadowClrPlayerTwo: $yellowDark;
   }
 }
 
+/* ---------- Scrollbar ---------- */
 /* width */
 ::-webkit-scrollbar {
   width: 12px;
@@ -100,6 +126,7 @@ $discSelectedShadowClrPlayerTwo: $yellowDark;
   background-color: $secondaryBgSoft;
 }
 
+/* ---------- Reset styles ---------- */
 * {
   margin: 0;
   padding: 0;
@@ -128,6 +155,7 @@ button {
   font: inherit;
 }
 
+/* ---------- Application container ---------- */
 #root {
   max-width: 700px;
   margin: 2rem auto;
@@ -135,6 +163,7 @@ button {
   place-content: center;
 }
 
+/* ---------- Buttons ---------- */
 .button,
 .menu-button {
   cursor: pointer;
@@ -222,10 +251,12 @@ button {
   }
 }
 
+/* ---------- Main Menu ---------- */
 .menu {
   padding: 2rem 0;
 }
 
+/* ---------- Game Header ---------- */
 .game-header {
   display: flex;
   align-items: center;
@@ -253,6 +284,7 @@ button {
   }
 }
 
+/* ---------- Players ---------- */
 .players-wrapper {
   display: flex;
   justify-content: space-between;
@@ -260,6 +292,14 @@ button {
   flex-wrap: wrap;
 
   .player {
+    padding: 1.5rem;
+    border-radius: 15px;
+    display: inline-block;
+    background-color: $primaryBg;
+    border: 4px solid $secondaryBg;
+    box-shadow: 0 10px 0 0 $secondaryBg;
+    position: relative;
+
     &:first-of-type {
       .player-avatar {
         left: -(math.div($playerSize, 2));
@@ -271,78 +311,73 @@ button {
         right: -(math.div($playerSize, 2));
       }
     }
-  }
-}
 
-.player {
-  padding: 1.5rem;
-  border-radius: 15px;
-  display: inline-block;
-  background-color: $primaryBg;
-  border: 4px solid $secondaryBg;
-  box-shadow: 0 10px 0 0 $secondaryBg;
-  position: relative;
-
-  &-avatar {
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
-    z-index: 5;
-    width: $playerSize;
-    height: $playerSize;
-
-    &,
-    &::before {
-      border-radius: 50%;
-    }
-
-    &::before {
-      content: "";
+    &-avatar {
       position: absolute;
-      bottom: -4px;
-      left: 50%;
-      z-index: 1;
-      transform: translateX(-50%);
-      width: 100%;
-      height: 100%;
-      background-color: $secondaryBg;
-    }
-
-    &-img {
-      width: 100%;
-      height: 100%;
-      object-fit: contain;
-      position: relative;
+      top: 50%;
+      transform: translateY(-50%);
       z-index: 5;
+      width: $playerSize;
+      height: $playerSize;
+
+      &,
+      &::before {
+        border-radius: 50%;
+      }
+
+      &::before {
+        content: "";
+        position: absolute;
+        bottom: -4px;
+        left: 50%;
+        z-index: 1;
+        transform: translateX(-50%);
+        width: 100%;
+        height: 100%;
+        background-color: $secondaryBg;
+      }
+
+      &-img {
+        width: 100%;
+        height: 100%;
+        object-fit: contain;
+        position: relative;
+        z-index: 5;
+      }
     }
-  }
 
-  &-name {
-    display: inline-block;
-    text-transform: uppercase;
-    font-weight: $fwMedium;
-    font-size: 1.25rem;
+    &-name {
+      display: inline-block;
+      text-transform: uppercase;
+      font-weight: $fwMedium;
+      font-size: 1.25rem;
 
-    &:first-of-type {
-      margin-left: math.div($playerSize, 2);
-    }
+      &:first-of-type {
+        margin-left: math.div($playerSize, 2);
+      }
 
-    &:last-of-type {
-      margin-right: math.div($playerSize, 2);
+      &:last-of-type {
+        margin-right: math.div($playerSize, 2);
+      }
     }
   }
 }
 
+/* ---------- Board ---------- */
 .board {
   display: inline-grid;
-  grid-template-columns: repeat($columnsAmount, $discSize);
+  grid-template-columns: repeat($boardColumns, $discSize);
   gap: $discMargin;
-  padding: $discMargin;
+  padding: $boardPadding;
   margin-top: 2rem;
   border-radius: 15px;
-  background-color: $discWrapperBg;
+  background-color: $boardBg;
   border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
+
+  @media screen and (min-width: $desktopSize) {
+    grid-template-columns: repeat($boardColumns, $discSizeDesktop);
+  }
 }
 
 .arrow {
@@ -354,6 +389,7 @@ button {
   }
 }
 
+/* ---------- Discs ---------- */
 .disc {
   width: $discSize;
   height: $discSize;
@@ -417,8 +453,14 @@ button {
       border-radius: 50%;
     }
   }
+
+  @media screen and (min-width: $desktopSize) {
+    width: $discSizeDesktop;
+    height: $discSizeDesktop;
+  }
 }
 
+/* ---------- Game Box ---------- */
 .game-box {
   padding: 1rem 2rem;
   max-width: max-content;
@@ -499,6 +541,19 @@ button {
   }
 }
 
+/* ---------- Game Shadow ---------- */
+.game-shadow {
+  width: 100vw;
+  height: 25vh;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  z-index: -1;
+  background-color: $purpleDark;
+  border-radius: 5vw 5vw 0 0;
+}
+
+/* ---------- Modal ---------- */
 .modal {
   padding: 2rem;
   background-color: $primaryBg;

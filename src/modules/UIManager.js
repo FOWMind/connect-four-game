@@ -27,14 +27,30 @@ export default class UIManager {
    * Handles the game render.
    */
   renderGame() {
+    // General
     this.renderGameWrapper();
+
+    // Game screen
     this.renderGameHeader();
     this.renderPlayers();
     this.renderBoard();
     this.renderArrow();
+    this.renderGameShadow();
+
+    // Game box
     this.renderGameBox();
     this.showTurnBox();
     this.resetTurn();
+  }
+
+  /**
+   * Displays a shadow in the screen
+   */
+  renderGameShadow() {
+    const shadow = document.createElement("div");
+    shadow.classList.add("game-shadow");
+    shadow.setAttribute("id", "game-shadow");
+    root.appendChild(shadow);
   }
 
   /**
