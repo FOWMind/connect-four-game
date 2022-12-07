@@ -551,6 +551,14 @@ button {
   z-index: -1;
   background-color: $purpleDark;
   border-radius: 5vw 5vw 0 0;
+
+  &.player-1 {
+    background-color: $playerOneClr;
+  }
+
+  &.player-2 {
+    background-color: $playerTwoClr;
+  }
 }
 
 /* ---------- Modal ---------- */

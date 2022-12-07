@@ -204,14 +204,7 @@ button {
   align-items: flex-start;
   flex-wrap: wrap;
 }
-.players-wrapper .player:first-of-type .player-avatar {
-  left: -27.5px;
-}
-.players-wrapper .player:last-of-type .player-avatar {
-  right: -27.5px;
-}
-
-.player {
+.players-wrapper .player {
   padding: 1.5rem;
   border-radius: 15px;
   display: inline-block;
@@ -220,7 +213,13 @@ button {
   box-shadow: 0 10px 0 0 #000;
   position: relative;
 }
-.player-avatar {
+.players-wrapper .player:first-of-type .player-avatar {
+  left: -27.5px;
+}
+.players-wrapper .player:last-of-type .player-avatar {
+  right: -27.5px;
+}
+.players-wrapper .player-avatar {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -228,10 +227,10 @@ button {
   width: 55px;
   height: 55px;
 }
-.player-avatar, .player-avatar::before {
+.players-wrapper .player-avatar, .players-wrapper .player-avatar::before {
   border-radius: 50%;
 }
-.player-avatar::before {
+.players-wrapper .player-avatar::before {
   content: "";
   position: absolute;
   bottom: -4px;
@@ -242,23 +241,23 @@ button {
   height: 100%;
   background-color: #000;
 }
-.player-avatar-img {
+.players-wrapper .player-avatar-img {
   width: 100%;
   height: 100%;
   object-fit: contain;
   position: relative;
   z-index: 5;
 }
-.player-name {
+.players-wrapper .player-name {
   display: inline-block;
   text-transform: uppercase;
   font-weight: 600;
   font-size: 1.25rem;
 }
-.player-name:first-of-type {
+.players-wrapper .player-name:first-of-type {
   margin-left: 27.5px;
 }
-.player-name:last-of-type {
+.players-wrapper .player-name:last-of-type {
   margin-right: 27.5px;
 }
 
@@ -421,6 +420,12 @@ button {
   z-index: -1;
   background-color: #5b2cd5;
   border-radius: 5vw 5vw 0 0;
+}
+.game-shadow.player-1 {
+  background-color: #fd6486;
+}
+.game-shadow.player-2 {
+  background-color: #ffce67;
 }
 
 /* ---------- Modal ---------- */

@@ -64,6 +64,7 @@ export default class GameManager {
     this.gameOver = false;
     this.resetTurn();
     this.uiManager.resetDiscs();
+    this.uiManager.resetGameShadow();
   }
 
   /**
@@ -169,5 +170,8 @@ export default class GameManager {
     this.setGameOver();
     this.audioManager.playSound("win");
     this.uiManager.showWinBox();
+
+    const winner = this.playerWithTurn;
+    this.uiManager.changeGameShadowColor(winner);
   }
 }

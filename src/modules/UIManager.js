@@ -50,7 +50,28 @@ export default class UIManager {
     const shadow = document.createElement("div");
     shadow.classList.add("game-shadow");
     shadow.setAttribute("id", "game-shadow");
-    root.appendChild(shadow);
+
+    const gameWrapper = document.getElementById("game");
+    gameWrapper.appendChild(shadow);
+  }
+
+  /**
+   * Changes the game shadow color depending on the winner player.
+   * @param {string} winner - The winner player of the game.
+   */
+  changeGameShadowColor(winner) {
+    const gameShadow = this.resetGameShadow();
+    gameShadow.classList.add("player-" + winner);
+  }
+
+  /**
+   * Resets the game shadow element to its initial state.
+   * @returns The game shadow element.
+   */
+  resetGameShadow() {
+    const gameShadow = document.getElementById("game-shadow");
+    gameShadow.classList.remove("player-1", "player-2");
+    return gameShadow;
   }
 
   /**
