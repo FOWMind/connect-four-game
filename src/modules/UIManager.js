@@ -17,8 +17,6 @@ export default class UIManager {
   constructor() {
     this.columns = 7;
     this.rows = 6;
-    this.discSize = 50; // pixels
-    this.arrowMargin = 5; // pixels
     this.modalCloseAnimationTime = 0.35; // seconds
     this.utils = Utils.getInstance();
   }
@@ -27,14 +25,51 @@ export default class UIManager {
    * Handles the game render.
    */
   renderGame() {
+    // General
     this.renderGameWrapper();
+
+    // Game screen
     this.renderGameHeader();
     this.renderPlayers();
     this.renderBoard();
     this.renderArrow();
+    this.renderGameShadow();
+
+    // Game box
     this.renderGameBox();
     this.showTurnBox();
     this.resetTurn();
+  }
+
+  /**
+   * Displays a shadow in the screen
+   */
+  renderGameShadow() {
+    const shadow = document.createElement("div");
+    shadow.classList.add("game-shadow");
+    shadow.setAttribute("id", "game-shadow");
+
+    const gameWrapper = document.getElementById("game");
+    gameWrapper.appendChild(shadow);
+  }
+
+  /**
+   * Changes the game shadow color depending on the winner player.
+   * @param {string} winner - The winner player of the game.
+   */
+  changeGameShadowColor(winner) {
+    const gameShadow = this.resetGameShadow();
+    gameShadow.classList.add("player-" + winner);
+  }
+
+  /**
+   * Resets the game shadow element to its initial state.
+   * @returns The game shadow element.
+   */
+  resetGameShadow() {
+    const gameShadow = document.getElementById("game-shadow");
+    gameShadow.classList.remove("player-1", "player-2");
+    return gameShadow;
   }
 
   /**
@@ -65,9 +100,10 @@ export default class UIManager {
    */
   moveArrow(disc) {
     const arrow = document.getElementById("arrow");
+    const arrowMargin = (25 * arrow.clientHeight) / 100;
     const board = document.getElementById("board");
     const boardTop =
-      board.offsetTop - arrow.clientHeight / 2 - this.arrowMargin + "px";
+      board.offsetTop - arrow.clientHeight / 2 - arrowMargin + "px";
     const discLeft = disc.offsetLeft + "px";
 
     arrow.style.top = boardTop;

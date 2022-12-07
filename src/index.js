@@ -1,5 +1,5 @@
-import UIManager from "./src/modules/UIManager.js";
-import EventManager from "./src/modules/EventManager.js";
+import UIManager from "./modules/UIManager.js";
+import EventManager from "./modules/EventManager.js";
 
 /**
  * TODO:
