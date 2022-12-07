@@ -11,6 +11,7 @@ $modalHideAnimationTime: 0.35s;
 $modalCloseSize: 70px;
 
 // Text
+$ff: "Anybody", sans-serif;
 $fwMedium: 600;
 
 /* Colors */
@@ -116,11 +117,15 @@ html {
 
 body {
   background-color: $bgClr;
-  font-family: "Poppins", sans-serif;
+  font-family: $ff;
 }
 
 img {
   display: block;
+}
+
+button {
+  font: inherit;
 }
 
 #root {
