@@ -17,8 +17,6 @@ export default class UIManager {
   constructor() {
     this.columns = 7;
     this.rows = 6;
-    this.discSize = 50; // pixels
-    this.arrowMargin = 5; // pixels
     this.modalCloseAnimationTime = 0.35; // seconds
     this.utils = Utils.getInstance();
   }
@@ -102,9 +100,10 @@ export default class UIManager {
    */
   moveArrow(disc) {
     const arrow = document.getElementById("arrow");
+    const arrowMargin = (25 * arrow.clientHeight) / 100;
     const board = document.getElementById("board");
     const boardTop =
-      board.offsetTop - arrow.clientHeight / 2 - this.arrowMargin + "px";
+      board.offsetTop - arrow.clientHeight / 2 - arrowMargin + "px";
     const discLeft = disc.offsetLeft + "px";
 
     arrow.style.top = boardTop;

@@ -13,6 +13,10 @@ $discSize: 50px;
 $discSizeDesktop: 70px;
 $discMargin: 10px;
 
+// Arrow
+$arrowSize: $discSize;
+$arrowSizeDesktop: $discSizeDesktop;
+
 // Players
 $playerSize: $discSize * 1.1;
 
@@ -381,11 +385,15 @@ button {
 }
 
 .arrow {
-  width: 50px;
+  width: $arrowSize;
   position: absolute;
 
   &.hidden {
     visibility: hidden;
+  }
+
+  @media screen and (min-width: $desktopSize) {
+    width: $arrowSizeDesktop;
   }
 }
 
