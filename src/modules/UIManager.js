@@ -189,10 +189,11 @@ export default class UIManager {
    */
   renderMenu() {
     const menuWrapper = document.createElement("div");
+    const menuIcon = this.createGameIcon();
     const menuButtons = this.createMenuButtons();
     menuWrapper.setAttribute("id", "menu");
     menuWrapper.classList.add("menu");
-    menuWrapper.appendChild(menuButtons);
+    menuWrapper.append(menuIcon, menuButtons);
     root.appendChild(menuWrapper);
   }
 

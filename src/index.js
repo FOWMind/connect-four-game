@@ -16,6 +16,7 @@ import EventManager from "./modules/EventManager.js";
  * - [x] Change scrollbar style
  * - End with mobile/tablet/desktop design.
  * - Try to improve RAM utilization when user clicks something.
+ * - Preload sounds to remove the delay.
  */
 
 /**
