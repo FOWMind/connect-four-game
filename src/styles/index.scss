@@ -299,12 +299,54 @@ button {
   }
 }
 
+/* ---------- Players and Board wrapper ---------- */
+.players-and-board-wrapper {
+  @media screen and (min-width: $desktopSize) {
+    display: flex;
+    align-items: center;
+
+    // for specificity
+    .players-wrapper {
+      .player {
+        .player-avatar {
+          top: -(math.div($playerSize, 2));
+          left: 50%;
+          transform: translateX(-50%);
+        }
+
+        .player-name {
+          margin: 0;
+          margin-top: math.div($playerSize, 2);
+          width: max-content;
+        }
+      }
+    }
+
+    .player-1 {
+      order: 0;
+    }
+
+    .board {
+      order: 1;
+      margin: 0 4rem;
+    }
+
+    .player-2 {
+      order: 2;
+    }
+  }
+}
+
 /* ---------- Players ---------- */
 .players-wrapper {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   flex-wrap: wrap;
+
+  @media screen and (min-width: $desktopSize) {
+    display: contents;
+  }
 
   .player {
     padding: 1.5rem;
@@ -315,13 +357,13 @@ button {
     box-shadow: 0 10px 0 0 $secondaryBg;
     position: relative;
 
-    &:first-of-type {
+    &-1 {
       .player-avatar {
         left: -(math.div($playerSize, 2));
       }
     }
 
-    &:last-of-type {
+    &-2 {
       .player-avatar {
         right: -(math.div($playerSize, 2));
       }
@@ -380,7 +422,11 @@ button {
 
 /* ---------- Board ---------- */
 .board {
-  display: inline-grid;
+  // width: calc(
+  //   ($discSize * $boardColumns) + ($discMargin * $boardColumns) +
+  //     ($boardPadding * 2)
+  // );
+  display: grid;
   grid-template-columns: repeat($boardColumns, $discSize);
   gap: $discMargin;
   padding: $boardPadding;

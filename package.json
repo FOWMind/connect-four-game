@@ -7,6 +7,7 @@
   "scripts": {
     "build": "rimraf build && webpack",
     "sass": "sass --watch src/styles/index.scss src/css/index.css --style compressed",
+    "dev": "npm run sass",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],

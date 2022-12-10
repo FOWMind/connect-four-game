@@ -30,6 +30,7 @@ export default class UIManager {
 
     // Game screen
     this.renderGameHeader();
+    this.renderPlayersAndBoardWrapper();
     this.renderPlayers();
     this.renderBoard();
     this.renderArrow();
@@ -665,6 +666,17 @@ export default class UIManager {
   }
 
   /**
+   * Renders a wrapper for both players and board in the game on screen.
+   */
+  renderPlayersAndBoardWrapper() {
+    const gameWrapper = document.getElementById("game");
+    const wrapper = document.createElement("div");
+    wrapper.classList.add("players-and-board-wrapper");
+    wrapper.setAttribute("id", "players-and-board-wrapper");
+    gameWrapper.appendChild(wrapper);
+  }
+
+  /**
    * Create a player box.
    * @param {string} playerName - A name for the new player.
    * @param {string} playerAvatarPath - The path of the avatar image to use.
@@ -672,7 +684,7 @@ export default class UIManager {
    */
   createPlayer(playerName = "Player", playerAvatarPath = "") {
     const container = document.createElement("div");
-    container.setAttribute("class", "player");
+    container.classList.add("player", "player-" + playerName);
 
     const avatarContainer = document.createElement("div");
     const avatarImage = new Image();
@@ -682,7 +694,7 @@ export default class UIManager {
     avatarImage.classList.add("player-avatar-img");
 
     const nameContainer = document.createElement("span");
-    const nameText = document.createTextNode(playerName);
+    const nameText = document.createTextNode(`Player ${playerName}`);
     nameContainer.classList.add("player-name");
     nameContainer.appendChild(nameText);
 
@@ -704,18 +716,19 @@ export default class UIManager {
    * Displays the player boxes on screen.
    */
   renderPlayers() {
-    const gameWrapper = document.getElementById("game");
-    const playersWrapper = this.createPlayerWrapper();
+    const wrapper = document.getElementById("players-and-board-wrapper");
+    const playerWrapper = this.createPlayerWrapper();
+    const players = GameManager.getInstance().players;
     const playerOne = this.createPlayer(
-      "Player 1",
+      players.one,
       "./src/images/player-1.svg"
     );
     const playerTwo = this.createPlayer(
-      "Player 2",
+      players.two,
       "./src/images/player-2.svg"
     );
-    playersWrapper.append(playerOne, playerTwo);
-    gameWrapper.appendChild(playersWrapper);
+    playerWrapper.append(playerOne, playerTwo);
+    wrapper.appendChild(playerWrapper);
   }
 
   /**
@@ -850,8 +863,8 @@ export default class UIManager {
    * Displays the board created on screen.
    */
   renderBoard() {
-    const gameWrapper = document.getElementById("game");
+    const wrapper = document.getElementById("players-and-board-wrapper");
     const board = this.createBoard();
-    gameWrapper.appendChild(board);
+    wrapper.appendChild(board);
   }
 }
