@@ -74,6 +74,15 @@ export default class UIManager {
   }
 
   /**
+   * Resets the board arrow appearance.
+   */
+  resetArrow() {
+    const arrow = document.getElementById("arrow");
+    arrow.classList.remove("player-1", "player-2");
+    arrow.classList.add("hidden");
+  }
+
+  /**
    * Changes the board arrow color depending on the current player with turn.
    */
   changeArrowColor() {
@@ -656,6 +665,16 @@ export default class UIManager {
   resetTurnBoxColor() {
     const turnBox = document.getElementsByClassName("turn-box")[0];
     turnBox.classList.remove("player-1", "player-2");
+  }
+
+  /**
+   * Resets the GUI elements states (colors, etc) on screen.
+   */
+  resetUI() {
+    this.resetDiscs();
+    this.resetGameShadow();
+    this.resetArrow();
+    this.resetTurnBoxColor();
   }
 
   /**

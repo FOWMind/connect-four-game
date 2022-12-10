@@ -20,7 +20,7 @@ export default class GameManager {
   };
   initialTurn = this.players.one;
   playerWithTurn = this.initialTurn;
-  timePerTurn = 15; // seconds
+  timePerTurn = 1500; // seconds
   gameStarted = false;
 
   constructor() {
@@ -45,7 +45,6 @@ export default class GameManager {
     this.playerWithTurn = this.initialTurn;
     this.clearTimers();
     this.uiManager.resetTurn();
-    this.uiManager.resetTurnBoxColor();
   }
 
   /**
@@ -57,14 +56,10 @@ export default class GameManager {
     // Avoid stop if not necessary
     if (!someDiscFilled) return;
 
-    const arrow = document.getElementById("arrow");
-
-    arrow.classList.add("hidden");
     this.gameStarted = false;
     this.gameOver = false;
     this.resetTurn();
-    this.uiManager.resetDiscs();
-    this.uiManager.resetGameShadow();
+    this.uiManager.resetUI();
   }
 
   /**
@@ -72,9 +67,8 @@ export default class GameManager {
    */
   changeTurnToOpponent() {
     const opponent = this.utils.getOppositePlayerWithTurn();
-    this.uiManager.changeArrowColor();
-    this.uiManager.changeTurnBoxColor(this.playerWithTurn);
     this.playerWithTurn = opponent;
+    this.uiManager.changeTurnBoxColor(opponent);
     this.uiManager.resetTurn();
   }
 
@@ -124,6 +118,7 @@ export default class GameManager {
     if (fourInRow) {
       const fourInRowDiscs = [disc, ...fourInRow];
       fourInRowDiscs.forEach((disc) => disc.classList.add("four-in-row"));
+      this.utils.allSibling = [];
       this.setWin();
     }
     return;

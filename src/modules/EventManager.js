@@ -137,6 +137,7 @@ export default class EventManager {
 
     this.gameManager.checkWin(lastAvailableDisc);
     this.uiManager.moveArrow(clickedDisc);
+    this.uiManager.changeArrowColor();
     this.uiManager.fillDisc(lastAvailableDisc, this.gameManager.playerWithTurn);
     this.audioManager.playSound("drop");
     this.gameManager.handleTurnChange();
