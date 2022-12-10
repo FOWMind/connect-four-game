@@ -72,8 +72,9 @@ export default class GameManager {
    */
   changeTurnToOpponent() {
     const opponent = this.utils.getOppositePlayerWithTurn();
+    this.uiManager.changeArrowColor();
+    this.uiManager.changeTurnBoxColor(this.playerWithTurn);
     this.playerWithTurn = opponent;
-    this.uiManager.changeTurnBoxColor(opponent);
     this.uiManager.resetTurn();
   }
 

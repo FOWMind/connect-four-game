@@ -449,6 +449,18 @@ button {
     visibility: hidden;
   }
 
+  &.player-1 {
+    path {
+      fill: $playerOneClr;
+    }
+  }
+
+  &.player-2 {
+    path {
+      fill: $playerTwoClr;
+    }
+  }
+
   @media screen and (min-width: $desktopSize) {
     width: $arrowSizeDesktop;
   }
