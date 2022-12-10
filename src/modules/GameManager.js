@@ -20,7 +20,7 @@ export default class GameManager {
   };
   initialTurn = this.players.one;
   playerWithTurn = this.initialTurn;
-  timePerTurn = 1500; // seconds
+  timePerTurn = 15; // seconds
   gameStarted = false;
 
   constructor() {
