@@ -1,5 +1,6 @@
 import UIManager from "./modules/UIManager.js";
 import EventManager from "./modules/EventManager.js";
+import AudioManager from "./modules/AudioManager.js";
 
 /**
  * TODO:
@@ -23,6 +24,8 @@ import EventManager from "./modules/EventManager.js";
  * Handles the application initialization.
  */
 function init() {
+  console.log("loading sounds...");
+  AudioManager.getInstance().preloadSounds();
   UIManager.getInstance().renderMenu();
   EventManager.getInstance().handleEvents();
 }
