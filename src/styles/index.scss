@@ -443,6 +443,7 @@ button {
 
 .arrow {
   width: $arrowSize;
+  height: auto;
   position: absolute;
 
   &.hidden {
