@@ -18,7 +18,7 @@ import AudioManager from "./modules/AudioManager.js";
  * - End with mobile/tablet/desktop design.
  * - Try to improve RAM utilization when user clicks something.
  * - [x] Preload sounds to remove the delay.
- * - Fix bug where multiple modals can be called at same time.
+ * - [x] Fix bug where multiple modals can be called at same time.
  */
 
 /**

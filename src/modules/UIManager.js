@@ -286,6 +286,9 @@ export default class UIManager {
       throw new Error("Content must be provided to create a modal.");
     }
 
+    const existedDialog = document.getElementById("modal");
+    if (existedDialog) return;
+
     const modal = document.createElement("div");
     modal.setAttribute("id", "modal");
     modal.classList.add("modal");
@@ -410,6 +413,7 @@ export default class UIManager {
    */
   showConfirmDialog(text) {
     const dialog = this.createConfirmDialog(text);
+    if (!dialog) return;
     AudioManager.getInstance().playSound("openModal");
     root.appendChild(dialog);
   }
@@ -458,7 +462,9 @@ export default class UIManager {
   showRules() {
     const rulesContent = this.createRulesContent();
     const rulesModal = this.createModal(rulesContent);
+    if (!rulesModal) return;
     root.appendChild(rulesModal);
+    return true;
   }
 
   /**

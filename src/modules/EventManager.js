@@ -111,8 +111,9 @@ export default class EventManager {
    * Handles what happens when the user clicks the Game Rules button.
    */
   handleGameRulesClick() {
+    const success = this.uiManager.showRules();
+    if (!success) return;
     this.audioManager.playSound("openModal");
-    this.uiManager.showRules();
   }
 
   /**
