@@ -111,8 +111,9 @@ export default class EventManager {
    * Handles what happens when the user clicks the Game Rules button.
    */
   handleGameRulesClick() {
+    const success = this.uiManager.showRules();
+    if (!success) return;
     this.audioManager.playSound("openModal");
-    this.uiManager.showRules();
   }
 
   /**
@@ -137,6 +138,7 @@ export default class EventManager {
 
     this.gameManager.checkWin(lastAvailableDisc);
     this.uiManager.moveArrow(clickedDisc);
+    this.uiManager.changeArrowColor();
     this.uiManager.fillDisc(lastAvailableDisc, this.gameManager.playerWithTurn);
     this.audioManager.playSound("drop");
     this.gameManager.handleTurnChange();

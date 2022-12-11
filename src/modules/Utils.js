@@ -15,6 +15,7 @@ export default class Utils {
   }
 
   siblingsNeededToWin = 3;
+  allSibling = [];
 
   /**
    * Gets all discs from the game.
@@ -101,6 +102,7 @@ export default class Utils {
    * @returns Whether has enough siblings or not.
    */
   checkEnoughSibling(siblings) {
+    if (!siblings) return;
     const hasEnoughSiblings = siblings.length >= this.siblingsNeededToWin;
     return hasEnoughSiblings;
   }
@@ -114,32 +116,33 @@ export default class Utils {
   checkFourInRow(disc, playerWithTurn) {
     currentPlayerWithTurn = playerWithTurn;
 
-    // Top siblings
+    // Vertical -> |
     const top = this.getFilledSibling("top", disc);
     if (this.checkEnoughSibling(top)) return top;
-
-    const topLeft = this.getFilledSibling("topLeft", disc);
-    if (this.checkEnoughSibling(topLeft)) return topLeft;
-
-    const topRight = this.getFilledSibling("topRight", disc);
-    if (this.checkEnoughSibling(topRight)) return topRight;
-
-    // Bottom siblings
     const bottom = this.getFilledSibling("bottom", disc);
     if (this.checkEnoughSibling(bottom)) return bottom;
+    this.allSibling = [];
 
-    const bottomLeft = this.getFilledSibling("bottomLeft", disc);
-    if (this.checkEnoughSibling(bottomLeft)) return bottomLeft;
-
-    const bottomRight = this.getFilledSibling("bottomRight", disc);
-    if (this.checkEnoughSibling(bottomRight)) return bottomRight;
-
-    // Left and Right siblings
+    // Horizontal -> --
     const left = this.getFilledSibling("left", disc);
     if (this.checkEnoughSibling(left)) return left;
-
     const right = this.getFilledSibling("right", disc);
     if (this.checkEnoughSibling(right)) return right;
+    this.allSibling = [];
+
+    // Slash Reversed -> \
+    const topLeft = this.getFilledSibling("topLeft", disc);
+    if (this.checkEnoughSibling(topLeft)) return topLeft;
+    const bottomRight = this.getFilledSibling("bottomRight", disc);
+    if (this.checkEnoughSibling(bottomRight)) return bottomRight;
+    this.allSibling = [];
+
+    // Slash -> /
+    const topRight = this.getFilledSibling("topRight", disc);
+    if (this.checkEnoughSibling(topRight)) return topRight;
+    const bottomLeft = this.getFilledSibling("bottomLeft", disc);
+    if (this.checkEnoughSibling(bottomLeft)) return bottomLeft;
+    this.allSibling = [];
 
     return false;
   }
@@ -155,7 +158,6 @@ export default class Utils {
       x: disc.getAttribute("position-x"),
       y: disc.getAttribute("position-y"),
     };
-    const allSibling = [];
 
     for (let i = 0; i < this.siblingsNeededToWin; i++) {
       if (to === "top") {
@@ -191,10 +193,11 @@ export default class Utils {
         sibling,
         currentPlayerWithTurn
       );
-      if (!filledByCurrentPlayer) continue;
-      allSibling.push(sibling);
+      if (!filledByCurrentPlayer) break; // there is a sibling, but the sibling is not filled by the player who dropped the disc
+      this.allSibling.push(sibling);
     }
-    return allSibling;
+
+    return this.allSibling;
   }
 
   /**

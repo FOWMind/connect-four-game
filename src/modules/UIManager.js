@@ -74,16 +74,54 @@ export default class UIManager {
   }
 
   /**
+   * Resets the board arrow appearance.
+   */
+  resetArrow() {
+    const arrow = document.getElementById("arrow");
+    arrow.classList.remove("player-1", "player-2");
+    arrow.classList.add("hidden");
+  }
+
+  /**
+   * Changes the board arrow color depending on the current player with turn.
+   */
+  changeArrowColor() {
+    const arrow = document.getElementById("arrow");
+    arrow.classList.remove("player-1", "player-2");
+    arrow.classList.add("player-" + GameManager.getInstance().playerWithTurn);
+  }
+
+  /**
    * Create an arrow with default position in board top position.
    * @returns The created arrow element.
    */
   createArrow() {
-    const arrow = new Image();
-    arrow.setAttribute("src", "./src/images/arrow.svg");
-    arrow.classList.add("arrow");
-    arrow.setAttribute("id", "arrow");
-    arrow.classList.add("hidden");
-    return arrow;
+    const arrowSvg = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "svg"
+    );
+    arrowSvg.setAttribute("width", "140");
+    arrowSvg.setAttribute("height", "80");
+    arrowSvg.setAttribute("viewBox", "0 0 140 80");
+    arrowSvg.setAttribute("fill", "none");
+
+    const arrowPath = document.createElementNS(
+      "http://www.w3.org/2000/svg",
+      "path"
+    );
+    arrowPath.setAttribute(
+      "d",
+      "M130 2.5L70 2.5H10C5.85786 2.5 2.5 5.85786 2.5 10V40.25C2.5 42.2375 3.24045 44.1624 4.29562 45.7168C5.35228 47.2735 6.85376 48.6508 8.62209 49.4254C19.9596 54.3921 49.4893 68.0668 67.1318 76.2882C69.1284 77.2187 71.4318 77.2243 73.4329 76.3044L133.133 48.8599C135.794 47.6363 137.5 44.975 137.5 42.0455V10C137.5 5.85786 134.142 2.5 130 2.5Z"
+    );
+    arrowPath.setAttribute("fill", "white");
+    arrowPath.setAttribute("stroke", "black");
+    arrowPath.setAttribute("stroke-width", "5");
+    arrowPath.setAttribute("stroke-linejoin", "round");
+
+    arrowSvg.appendChild(arrowPath);
+    arrowSvg.setAttribute("id", "arrow");
+    arrowSvg.classList.add("arrow", "hidden");
+    return arrowSvg;
   }
 
   /**
@@ -248,6 +286,9 @@ export default class UIManager {
       throw new Error("Content must be provided to create a modal.");
     }
 
+    const existedDialog = document.getElementById("modal");
+    if (existedDialog) return;
+
     const modal = document.createElement("div");
     modal.setAttribute("id", "modal");
     modal.classList.add("modal");
@@ -372,6 +413,7 @@ export default class UIManager {
    */
   showConfirmDialog(text) {
     const dialog = this.createConfirmDialog(text);
+    if (!dialog) return;
     AudioManager.getInstance().playSound("openModal");
     root.appendChild(dialog);
   }
@@ -420,7 +462,9 @@ export default class UIManager {
   showRules() {
     const rulesContent = this.createRulesContent();
     const rulesModal = this.createModal(rulesContent);
+    if (!rulesModal) return;
     root.appendChild(rulesModal);
+    return true;
   }
 
   /**
@@ -627,6 +671,16 @@ export default class UIManager {
   resetTurnBoxColor() {
     const turnBox = document.getElementsByClassName("turn-box")[0];
     turnBox.classList.remove("player-1", "player-2");
+  }
+
+  /**
+   * Resets the GUI elements states (colors, etc) on screen.
+   */
+  resetUI() {
+    this.resetDiscs();
+    this.resetGameShadow();
+    this.resetArrow();
+    this.resetTurnBoxColor();
   }
 
   /**

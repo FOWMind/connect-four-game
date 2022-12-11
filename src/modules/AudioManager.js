@@ -8,6 +8,7 @@ export default class AudioManager {
     return this.instance;
   }
 
+  preloadedSounds = {};
   soundPath = "./src/sounds/";
   sounds = {
     drop: this.soundPath + "drop.mp3",
@@ -21,16 +22,27 @@ export default class AudioManager {
   };
 
   /**
-   * Create an audio instance from sound name.
-   * @param {string} soundName - The desired sound name to create (example: "click").
-   * @returns The audio instance.
+   * Preloads all of the sounds that will be used in the application/game.
    */
-  createAudio(soundName) {
-    if (!this.sounds[soundName]) {
-      throw new Error("Invalid sound name.");
-    }
-    const audio = new Audio(this.sounds[soundName]);
-    return audio;
+  preloadSounds() {
+    const soundList = Object.entries(this.sounds);
+    soundList.forEach((sound) => {
+      const soundName = sound[0];
+      const soundPath = sound[1];
+      const newSound = new Audio(soundPath);
+      newSound.preload = "auto";
+
+      this.preloadedSounds[soundName] = newSound;
+    });
+  }
+
+  /**
+   * Stops the given sound.
+   * @param {Audio} sound - The sound to stop.
+   */
+  stopSound(sound) {
+    sound.pause();
+    sound.currentTime = 0;
   }
 
   /**
@@ -38,7 +50,9 @@ export default class AudioManager {
    * @param {string} soundName - The sound name to play (example: "click").
    */
   playSound(soundName) {
-    const sound = this.createAudio(soundName);
+    const sound = this.preloadedSounds[soundName];
+    if (!sound) return;
+    this.stopSound(sound);
     sound.play().catch((err) => {
       console.warn(err);
     });

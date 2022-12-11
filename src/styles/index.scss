@@ -328,7 +328,8 @@ button {
 
     .board {
       order: 1;
-      margin: 0 4rem;
+      margin-left: 4rem;
+      margin-right: 4rem;
     }
 
     .player-2 {
@@ -443,10 +444,23 @@ button {
 
 .arrow {
   width: $arrowSize;
+  height: auto;
   position: absolute;
 
   &.hidden {
     visibility: hidden;
+  }
+
+  &.player-1 {
+    path {
+      fill: $playerOneClr;
+    }
+  }
+
+  &.player-2 {
+    path {
+      fill: $playerTwoClr;
+    }
   }
 
   @media screen and (min-width: $desktopSize) {
