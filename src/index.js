@@ -25,7 +25,6 @@ import AudioManager from "./modules/AudioManager.js";
  * Handles the application initialization.
  */
 function init() {
-  console.log("loading sounds...");
   AudioManager.getInstance().preloadSounds();
   UIManager.getInstance().renderMenu();
   EventManager.getInstance().handleEvents();

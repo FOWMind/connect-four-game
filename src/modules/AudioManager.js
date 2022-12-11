@@ -33,9 +33,6 @@ export default class AudioManager {
       newSound.preload = "auto";
 
       this.preloadedSounds[soundName] = newSound;
-      if (Object.entries(this.preloadedSounds).length >= soundList.length) {
-        console.log("all sounds preloaded");
-      }
     });
   }
 
