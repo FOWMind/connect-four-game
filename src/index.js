@@ -17,7 +17,8 @@ import AudioManager from "./modules/AudioManager.js";
  * - [x] Change scrollbar style
  * - End with mobile/tablet/desktop design.
  * - Try to improve RAM utilization when user clicks something.
- * - Preload sounds to remove the delay.
+ * - [x] Preload sounds to remove the delay.
+ * - Fix bug where multiple modals can be called at same time.
  */
 
 /**

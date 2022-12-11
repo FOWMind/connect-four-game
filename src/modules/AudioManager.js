@@ -40,11 +40,22 @@ export default class AudioManager {
   }
 
   /**
+   * Stops the given sound.
+   * @param {Audio} sound - The sound to stop.
+   */
+  stopSound(sound) {
+    sound.pause();
+    sound.currentTime = 0;
+  }
+
+  /**
    * Plays a sound by its name.
    * @param {string} soundName - The sound name to play (example: "click").
    */
   playSound(soundName) {
     const sound = this.preloadedSounds[soundName];
+    if (!sound) return;
+    this.stopSound(sound);
     sound.play().catch((err) => {
       console.warn(err);
     });
