@@ -1,3 +1,4 @@
 {
-  "prettier.semi": true
+	"prettier.semi": true,
+	"prettier.useTabs": false
 }

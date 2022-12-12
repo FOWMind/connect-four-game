@@ -15,10 +15,10 @@ import AudioManager from "./modules/AudioManager.js";
  * - [x] Find a bug where the four-in-row check doesn't work correctly.
  * and the game continue even with a four-in-row (it occurs when I try to get a tie).
  * - [x] Change scrollbar style
- * - End with mobile/tablet/desktop design.
- * - Try to improve RAM utilization when user clicks something.
  * - [x] Preload sounds to remove the delay.
  * - [x] Fix bug where multiple modals can be called at same time.
+ * - [...] End with mobile/tablet/desktop design.
+ * - Try to improve RAM utilization when user clicks something.
  */
 
 /**
