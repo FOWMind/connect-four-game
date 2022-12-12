@@ -3,7 +3,7 @@
 
 // Screen sizes
 $desktopSize: 1360px;
-$mobileSize: 450px;
+$tabletSize: 450px;
 
 // Board
 $boardColumns: 7;
@@ -344,10 +344,12 @@ button {
 
 /* ---------- Players ---------- */
 .players-wrapper {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  flex-wrap: wrap;
+  @media screen and (min-width: $tabletSize) {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
 
   @media screen and (min-width: $desktopSize) {
     display: contents;
@@ -355,32 +357,24 @@ button {
 
   .player {
     padding: 1.5rem;
+    margin: 0 auto;
+    margin-top: 2.5rem;
     border-radius: 15px;
-    display: inline-block;
+    display: block;
+    max-width: max-content;
     background-color: $primaryBg;
     border: 4px solid $secondaryBg;
     box-shadow: 0 10px 0 0 $secondaryBg;
     position: relative;
 
-    &-1 {
-      .player-avatar {
-        left: -(math.div($playerSize, 2));
-      }
-    }
-
-    &-2 {
-      .player-avatar {
-        right: -(math.div($playerSize, 2));
-      }
-    }
-
     &-avatar {
-      position: absolute;
-      top: 50%;
-      transform: translateY(-50%);
-      z-index: 5;
       width: $playerSize;
       height: $playerSize;
+      position: absolute;
+      top: -(math.div($playerSize, 2));
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 5;
 
       &,
       &::before {
@@ -406,20 +400,53 @@ button {
         position: relative;
         z-index: 5;
       }
+
+      @media screen and (min-width: $tabletSize) {
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+      }
     }
 
     &-name {
       display: inline-block;
       text-transform: uppercase;
+      text-align: center;
       font-weight: $fwMedium;
       font-size: 1.25rem;
+      margin-top: math.div($playerSize, 2.5);
 
-      &:first-of-type {
-        margin-left: math.div($playerSize, 2);
+      @media screen and (min-width: $tabletSize) {
+        margin-top: 0;
+      }
+    }
+
+    @media screen and (min-width: $tabletSize) {
+      margin: 0;
+      max-width: initial;
+
+      &-1 {
+        .player-avatar {
+          right: auto;
+          left: -(math.div($playerSize, 2));
+        }
       }
 
-      &:last-of-type {
-        margin-right: math.div($playerSize, 2);
+      &-2 {
+        .player-avatar {
+          left: auto;
+          right: -(math.div($playerSize, 2));
+        }
+      }
+
+      &-name {
+        &:first-of-type {
+          margin-left: math.div($playerSize, 2);
+        }
+
+        &:last-of-type {
+          margin-right: math.div($playerSize, 2);
+        }
       }
     }
   }
@@ -441,7 +468,7 @@ button {
   border: 4px solid $secondaryBg;
   box-shadow: 0 10px 0 0 $secondaryBg;
 
-  @media screen and (min-width: $mobileSize) {
+  @media screen and (min-width: $tabletSize) {
     max-width: initial;
     height: ($discSize * $boardRows) + ($discMargin * ($boardRows)) +
       ($discBorderWidth * $boardRows);
@@ -457,7 +484,7 @@ button {
 }
 
 .arrow {
-  width: $arrowSize;
+  width: 13.57vw - $boardBorderWidth;
   height: auto;
   position: absolute;
 
@@ -475,6 +502,10 @@ button {
     path {
       fill: $playerTwoClr;
     }
+  }
+
+  @media screen and (min-width: $tabletSize) {
+    width: $arrowSize;
   }
 
   @media screen and (min-width: $desktopSize) {
@@ -554,7 +585,7 @@ button {
     }
   }
 
-  @media screen and (min-width: $mobileSize) {
+  @media screen and (min-width: $tabletSize) {
     width: 14.8%;
     max-width: $discSize;
     height: 16.6%;
